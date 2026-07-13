@@ -1,0 +1,71 @@
+import type { User } from '@supabase/supabase-js'
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react'
+
+import { isSupabaseConfigured, supabase } from '../../lib/supabase'
+import { AuthContext, type AuthStatus } from './auth-context'
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [status, setStatus] = useState<AuthStatus>(
+    isSupabaseConfigured ? 'loading' : 'unconfigured',
+  )
+  const [user, setUser] = useState<User | null>(null)
+  const [isRecovery, setIsRecovery] = useState(false)
+
+  useEffect(() => {
+    const client = supabase
+
+    if (!client) {
+      return
+    }
+
+    let isMounted = true
+
+    const loadUser = async () => {
+      const { data, error } = await client.auth.getUser()
+
+      if (!isMounted) {
+        return
+      }
+
+      if (error || !data.user) {
+        setUser(null)
+        setStatus('anonymous')
+        return
+      }
+
+      setUser(data.user)
+      setStatus('authenticated')
+    }
+
+    void loadUser()
+
+    const {
+      data: { subscription },
+    } = client.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) {
+        return
+      }
+
+      setIsRecovery(event === 'PASSWORD_RECOVERY')
+      setUser(session?.user ?? null)
+      setStatus(session?.user ? 'authenticated' : 'anonymous')
+    })
+
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  const value = useMemo(
+    () => ({ isRecovery, status, user }),
+    [isRecovery, status, user],
+  )
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PDF Toolkit | Master your PDFs with precision</title>
+<!-- Google Fonts: Geist for Headlines, Inter for Body -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-tertiary-container": "#fffbff",
+                    "outline-variant": "#c2c6d6",
+                    "on-primary-fixed": "#001a42",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-tertiary-fixed": "#2a1700",
+                    "surface-dim": "#d9dadb",
+                    "on-secondary-fixed": "#002113",
+                    "background": "#f8f9fa",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "surface-container-low": "#f3f4f5",
+                    "error": "#ba1a1a",
+                    "outline": "#727785",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-surface": "#191c1d",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-secondary": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "on-primary-fixed-variant": "#004395",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#00714d",
+                    "primary": "#0058be",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container": "#edeeef",
+                    "primary-fixed-dim": "#adc6ff",
+                    "primary-container": "#2170e4",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "tertiary-container": "#a36700",
+                    "secondary": "#006c49",
+                    "inverse-surface": "#2e3132",
+                    "on-background": "#191c1d",
+                    "surface-bright": "#f8f9fa",
+                    "tertiary": "#825100",
+                    "on-surface-variant": "#424754",
+                    "secondary-container": "#6cf8bb",
+                    "on-primary-container": "#fefcff",
+                    "surface-container-high": "#e7e8e9",
+                    "surface-tint": "#005ac2",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#f0f1f2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "32px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "stack-md": "16px",
+                    "margin-desktop": "40px",
+                    "unit": "4px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Geist"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Geist"],
+                    "display": ["Geist"],
+                    "headline-sm": ["Geist"],
+                    "headline-lg-mobile": ["Geist"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-surface {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 4px 6px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-shadow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% -20%, #e0e7ff 0%, #f8f9fa 60%);
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+<!-- TopNavBar Component -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-margin-desktop py-4 max-w-container-max mx-auto glass-surface border-b border-outline-variant/30 transition-all duration-300" id="main-nav">
+<div class="flex items-center gap-stack-lg">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-surface-bright">PDF Toolkit</span>
+<div class="hidden md:flex items-center gap-stack-md">
+<a class="font-label-md text-label-md text-primary dark:text-primary-fixed-dim border-b-2 border-primary pb-1" href="#">Features</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors px-2" href="#">Pricing</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors px-2" href="#">Enterprise</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors px-2" href="#">About</a>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="hidden sm:block font-label-md text-label-md text-on-surface px-4 py-2 hover:bg-surface-container-low transition-colors rounded-lg">Log In</button>
+<button class="font-label-md text-label-md bg-primary text-on-primary px-5 py-2.5 rounded-lg font-semibold active:scale-95 duration-100 shadow-sm">Get Started</button>
+</div>
+</nav>
+<main class="pt-24 overflow-x-hidden">
+<!-- Hero Section -->
+<section class="hero-gradient relative min-h-[80vh] flex flex-col items-center justify-center text-center px-margin-mobile md:px-margin-desktop py-stack-lg">
+<div class="max-w-4xl mx-auto space-y-stack-md animate-in fade-in slide-in-from-bottom-4 duration-1000">
+<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+                    Now with AI-Powered Summarization
+                </span>
+<h1 class="font-display text-display md:text-6xl text-on-surface tracking-tight">
+                    Master your PDFs with precision.
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                    The professional document workflow engine designed for speed, security, and absolute clarity. Elevate your files beyond simple reading.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-stack-md pt-stack-md">
+<button class="w-full sm:w-auto px-8 py-4 bg-primary text-on-primary rounded-xl font-headline-sm text-headline-sm shadow-md hover:brightness-110 active:scale-95 transition-all">
+                        Start Processing Free
+                    </button>
+<button class="w-full sm:w-auto px-8 py-4 bg-surface-container-lowest border border-outline-variant text-on-surface rounded-xl font-headline-sm text-headline-sm hover:bg-surface-container-low transition-all">
+                        Watch Demo
+                    </button>
+</div>
+</div>
+<!-- Hero Feature Image (Asymmetric Bento-ish feel) -->
+<div class="mt-20 w-full max-w-5xl mx-auto relative px-margin-mobile">
+<div class="relative rounded-2xl overflow-hidden border border-outline-variant/50 shadow-2xl bg-white aspect-video md:aspect-[21/9]">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist high-fidelity user interface of a document management dashboard. The screen shows a sophisticated file organization grid with soft shadows and elegant typography. Large, clear previews of PDF documents are visible on a light grey background with blue primary accents. The overall mood is professional, calm, and technologically advanced, following a premium Apple-inspired aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCHXQUW-WqHALANuBQKGsyGCs8jLJH-VH7hwx0zCG26JeGrPKasxqLe9HAyj_iox40Rn0ZUvcu7NPSzLaEC0fQIFwi_Eszj3VQnUubLxkA0ha7RF8niZVf92VZgllZjq982Z1GucX2bsPgfFTcl04Zy7bh8qOd6H7WP2ql3YicN5ISjQGcwpwZ4kNifyprX6mTNChkpTFfYRDUpm2_FNcxo3zFTVKpJaR-l-Fw9X2ty2LwA6x8ixEi"/>
+<!-- Float UI Overlays -->
+<div class="absolute top-8 left-8 p-4 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-outline-variant/30 animate-bounce duration-[3000ms]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Optimization Complete</p>
+<p class="text-[10px] text-on-surface-variant">-84% File size reduced</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Grid (Bento Style) -->
+<section class="py-24 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Precision Tools for Every Task</h2>
+<p class="text-on-surface-variant font-body-md text-body-md mt-2">Engineered for the modern workflow where speed meets security.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Feature 1: Large Merge -->
+<div class="md:col-span-8 group p-8 rounded-3xl bg-surface-container-low border border-outline-variant/30 flex flex-col justify-between min-h-[320px] transition-all hover:bg-surface-container">
+<div>
+<div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-2xl">call_merge</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Seamless Merge</h3>
+<p class="mt-2 text-on-surface-variant max-w-md">Combine hundreds of documents into a single, cohesive PDF with preserved bookmarks, hyperlinks, and metadata.</p>
+</div>
+<div class="mt-8 flex gap-2">
+<span class="px-3 py-1 bg-surface-container-lowest rounded-full text-[10px] font-bold uppercase tracking-wider text-outline">Smart Sorting</span>
+<span class="px-3 py-1 bg-surface-container-lowest rounded-full text-[10px] font-bold uppercase tracking-wider text-outline">Batch Mode</span>
+</div>
+</div>
+<!-- Feature 2: Small Split -->
+<div class="md:col-span-4 p-8 rounded-3xl bg-white border border-outline-variant/30 card-shadow">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-2xl">call_split</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Precision Split</h3>
+<p class="mt-2 text-on-surface-variant text-body-md">Explode large files into individual pages or specific ranges with surgical accuracy.</p>
+</div>
+<!-- Feature 3: Small Compress -->
+<div class="md:col-span-4 p-8 rounded-3xl bg-white border border-outline-variant/30 card-shadow">
+<div class="w-12 h-12 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-2xl">compress</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Smart Compress</h3>
+<p class="mt-2 text-on-surface-variant text-body-md">Reduce file size up to 90% without visible loss in quality using our neural compression engine.</p>
+</div>
+<!-- Feature 4: Large Convert -->
+<div class="md:col-span-8 p-8 rounded-3xl bg-inverse-surface text-inverse-on-surface flex flex-col md:flex-row gap-8 items-center overflow-hidden">
+<div class="flex-1 order-2 md:order-1">
+<div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-2xl">sync_alt</span>
+</div>
+<h3 class="font-headline-md text-headline-md">Universal Conversion</h3>
+<p class="mt-2 text-surface-variant">Convert PDF to Office, CAD, or high-res images. One-click bidirectional processing that respects original formatting.</p>
+<button class="mt-6 flex items-center gap-2 text-primary-fixed-dim font-label-md text-label-md group">
+                            Explore formats <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="flex-1 order-1 md:order-2 h-full flex items-center justify-center">
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-white/10 rounded-xl border border-white/20 text-center w-24">DOCX</div>
+<div class="p-4 bg-white/10 rounded-xl border border-white/20 text-center w-24">XLSX</div>
+<div class="p-4 bg-white/10 rounded-xl border border-white/20 text-center w-24">PPTX</div>
+<div class="p-4 bg-white/10 rounded-xl border border-white/20 text-center w-24">DWG</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Popular Tools Grid Section -->
+<section class="bg-surface-container py-24">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-gutter">
+<div class="max-w-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">The Complete Toolkit</h2>
+<p class="text-on-surface-variant font-body-md text-body-md mt-2">A library of 20+ specialized tools to handle any document scenario.</p>
+</div>
+<a class="text-primary font-label-md text-label-md flex items-center gap-2 pb-2" href="#">View all tools <span class="material-symbols-outlined">open_in_new</span></a>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-gutter">
+<!-- Tool Item 1 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">edit</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">Edit PDF</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">Modify text and images directly.</p>
+</div>
+<!-- Tool Item 2 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">signature</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">eSign</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">Legally binding signatures.</p>
+</div>
+<!-- Tool Item 3 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">lock</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">Protect</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">AES-256 encryption &amp; PW.</p>
+</div>
+<!-- Tool Item 4 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">scan</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">OCR</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">Optical character recognition.</p>
+</div>
+<!-- Tool Item 5 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">delete</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">Delete Pages</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">Quick page removal.</p>
+</div>
+<!-- Tool Item 6 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">history_edu</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">Watermark</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">Custom brand overlays.</p>
+</div>
+<!-- Tool Item 7 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">import_contacts</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">Flatten</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">Remove interactive layers.</p>
+</div>
+<!-- Tool Item 8 -->
+<div class="bg-white p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-all cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-primary mb-4 block">auto_stories</span>
+<h4 class="font-headline-sm text-headline-sm mb-1">Rearrange</h4>
+<p class="text-on-surface-variant text-[12px] leading-snug">Drag and drop ordering.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Preview -->
+<section class="py-24 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Simple, Transparent Pricing</h2>
+<p class="text-on-surface-variant mt-2">Choose the plan that fits your volume.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter max-w-5xl mx-auto">
+<!-- Free -->
+<div class="p-8 rounded-3xl border border-outline-variant/30 bg-white card-shadow flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Starter</h3>
+<div class="mt-4 flex items-baseline gap-1">
+<span class="text-3xl font-bold">$0</span>
+<span class="text-on-surface-variant text-sm">/forever</span>
+</div>
+<ul class="mt-8 space-y-4 flex-1">
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-secondary text-sm">check</span> 5 tasks per day</li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-secondary text-sm">check</span> 10MB max file size</li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-secondary text-sm">check</span> Web only access</li>
+</ul>
+<button class="mt-8 w-full py-3 border border-outline-variant rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors">Start Free</button>
+</div>
+<!-- Pro -->
+<div class="p-8 rounded-3xl border-2 border-primary bg-white shadow-xl flex flex-col relative scale-105 z-10">
+<span class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Most Popular</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Professional</h3>
+<div class="mt-4 flex items-baseline gap-1">
+<span class="text-3xl font-bold">$12</span>
+<span class="text-on-surface-variant text-sm">/month</span>
+</div>
+<ul class="mt-8 space-y-4 flex-1">
+<li class="flex items-center gap-3 text-body-md text-on-surface font-medium"><span class="material-symbols-outlined text-primary text-sm">check</span> Unlimited tasks</li>
+<li class="flex items-center gap-3 text-body-md text-on-surface font-medium"><span class="material-symbols-outlined text-primary text-sm">check</span> 2GB max file size</li>
+<li class="flex items-center gap-3 text-body-md text-on-surface font-medium"><span class="material-symbols-outlined text-primary text-sm">check</span> Desktop &amp; Mobile Apps</li>
+<li class="flex items-center gap-3 text-body-md text-on-surface font-medium"><span class="material-symbols-outlined text-primary text-sm">check</span> AI Auto-Summarize</li>
+</ul>
+<button class="mt-8 w-full py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:brightness-110 shadow-lg active:scale-95 transition-all">Go Professional</button>
+</div>
+<!-- Enterprise -->
+<div class="p-8 rounded-3xl border border-outline-variant/30 bg-white card-shadow flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Enterprise</h3>
+<div class="mt-4 flex items-baseline gap-1">
+<span class="text-3xl font-bold">Custom</span>
+</div>
+<ul class="mt-8 space-y-4 flex-1">
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-secondary text-sm">check</span> SSO &amp; Team Management</li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-secondary text-sm">check</span> Custom API Integration</li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-secondary text-sm">check</span> 99.9% SLA Guarantee</li>
+</ul>
+<button class="mt-8 w-full py-3 border border-outline-variant rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors">Contact Sales</button>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-3xl mx-auto px-margin-mobile">
+<h2 class="font-headline-lg text-headline-lg text-on-surface text-center mb-12">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<details class="group bg-white rounded-2xl border border-outline-variant/30 overflow-hidden" open="">
+<summary class="flex justify-between items-center p-6 cursor-pointer list-none">
+<span class="font-headline-sm text-headline-sm">Is my data secure?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+                            Absolutely. We use bank-grade AES-256 encryption for all file transfers. Documents are automatically deleted from our servers 2 hours after processing, unless you choose to save them to your Cloud Workspace.
+                        </div>
+</details>
+<details class="group bg-white rounded-2xl border border-outline-variant/30 overflow-hidden">
+<summary class="flex justify-between items-center p-6 cursor-pointer list-none">
+<span class="font-headline-sm text-headline-sm">Can I cancel my subscription?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+                            Yes, you can cancel at any time from your account settings. There are no long-term contracts or hidden fees. If you cancel, your Pro features will remain active until the end of your billing cycle.
+                        </div>
+</details>
+<details class="group bg-white rounded-2xl border border-outline-variant/30 overflow-hidden">
+<summary class="flex justify-between items-center p-6 cursor-pointer list-none">
+<span class="font-headline-sm text-headline-sm">Do you offer educational discounts?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+                            We do! Students and educators with a valid .edu email can receive 50% off any annual plan. Reach out to our support team to verify your status.
+                        </div>
+</details>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 px-margin-mobile">
+<div class="max-w-5xl mx-auto rounded-3xl bg-primary text-on-primary p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_120%,#ffffff_0%,transparent_50%)]"></div>
+<h2 class="font-display text-4xl md:text-5xl mb-6 relative z-10">Ready to master your workflow?</h2>
+<p class="text-on-primary/80 font-body-lg text-body-lg mb-10 max-w-xl mx-auto relative z-10">Join over 2 million professionals who trust PDF Toolkit for their daily document needs.</p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
+<button class="px-8 py-4 bg-white text-primary rounded-xl font-headline-sm text-headline-sm hover:bg-surface-bright transition-all active:scale-95 shadow-lg">Create Free Account</button>
+<button class="px-8 py-4 bg-transparent border border-white/30 text-white rounded-xl font-headline-sm text-headline-sm hover:bg-white/10 transition-all">Talk to Enterprise</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="w-full py-stack-lg px-6 md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter bg-surface-container-low dark:bg-surface-container-highest border-t border-outline-variant">
+<div class="col-span-1">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface mb-4 block">PDF Toolkit</span>
+<p class="text-on-surface-variant font-body-md text-body-md max-w-xs">The precision engine for document management. Secure, fast, and simple.</p>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold mb-4 text-on-surface">Product</h5>
+<ul class="space-y-3">
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Features</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Integrations</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Pricing</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Desktop App</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold mb-4 text-on-surface">Resources</h5>
+<ul class="space-y-3">
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Security</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Status</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Help Center</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold mb-4 text-on-surface">Legal</h5>
+<ul class="space-y-3">
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-outline hover:text-primary transition-colors" href="#">Cookie Policy</a></li>
+</ul>
+</div>
+<div class="col-span-1 md:col-span-4 pt-12 mt-12 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-outline">© 2024 PDF Toolkit. Securely processing files globally.</p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">public</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">alternate_email</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">share</span>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction: Nav shadow on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-md');
+                nav.classList.remove('backdrop-blur-md');
+                nav.classList.add('backdrop-blur-xl');
+            } else {
+                nav.classList.remove('shadow-md');
+                nav.classList.remove('backdrop-blur-xl');
+                nav.classList.add('backdrop-blur-md');
+            }
+        });
+
+        // Hover animation for tool items
+        const tools = document.querySelectorAll('.card-shadow');
+        tools.forEach(tool => {
+            tool.addEventListener('mouseenter', () => {
+                const icon = tool.querySelector('.material-symbols-outlined');
+                if(icon) icon.style.transform = 'scale(1.1) rotate(5deg)';
+            });
+            tool.addEventListener('mouseleave', () => {
+                const icon = tool.querySelector('.material-symbols-outlined');
+                if(icon) icon.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+    </script>
+</body></html>

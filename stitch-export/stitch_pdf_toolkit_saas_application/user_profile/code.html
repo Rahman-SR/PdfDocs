@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile - PDF Toolkit</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Design System Tokens -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-tertiary-container": "#fffbff",
+                        "outline-variant": "#c2c6d6",
+                        "on-primary-fixed": "#001a42",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-tertiary-fixed": "#2a1700",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-fixed": "#002113",
+                        "background": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "surface-container-low": "#f3f4f5",
+                        "error": "#ba1a1a",
+                        "outline": "#727785",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-surface": "#191c1d",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "on-primary-fixed-variant": "#004395",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#00714d",
+                        "primary": "#0058be",
+                        "primary-fixed": "#d8e2ff",
+                        "surface-container": "#edeeef",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary-container": "#2170e4",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "tertiary-container": "#a36700",
+                        "secondary": "#006c49",
+                        "inverse-surface": "#2e3132",
+                        "on-background": "#191c1d",
+                        "surface-bright": "#f8f9fa",
+                        "tertiary": "#825100",
+                        "on-surface-variant": "#424754",
+                        "secondary-container": "#6cf8bb",
+                        "on-primary-container": "#fefcff",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-tint": "#005ac2",
+                        "inverse-primary": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f0f1f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "stack-md": "16px",
+                        "margin-desktop": "40px",
+                        "unit": "4px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Geist"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Geist"],
+                        "display": ["Geist"],
+                        "headline-sm": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .sidebar-indicator {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- Shared SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen flex flex-col py-stack-lg bg-surface border-r border-outline-variant/50 w-64 z-40">
+<div class="px-6 mb-8">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">PDF Toolkit</h1>
+<p class="text-label-md font-label-md text-on-surface-variant opacity-70 mt-1">Pro Plan</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-all group" href="#">
+<span class="material-symbols-outlined text-inherit">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-all group" href="#">
+<span class="material-symbols-outlined text-inherit">handyman</span>
+<span class="font-label-md text-label-md">Tools</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-all group" href="#">
+<span class="material-symbols-outlined text-inherit">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<!-- Active State: Profile -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-high text-primary border-l-4 border-primary translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-inherit" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+<div class="px-3 mt-auto pt-6 border-t border-outline-variant/30 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 mb-4">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
+                    JD
+                </div>
+<div class="overflow-hidden">
+<p class="font-label-md text-label-md text-on-surface truncate">John Doe</p>
+<p class="text-[10px] text-on-surface-variant truncate">john@example.com</p>
+</div>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined text-inherit">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined text-inherit">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Shared TopAppBar -->
+<header class="flex justify-between items-center h-16 px-gutter ml-64 fixed top-0 right-0 left-0 bg-surface-container-lowest border-b border-outline-variant z-30">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+</button>
+<h2 class="font-headline-sm text-on-surface">Workspace</h2>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">share</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">cloud_upload</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-64 mt-16 p-margin-desktop bg-background min-h-screen">
+<div class="max-w-container-max mx-auto">
+<!-- Page Header -->
+<div class="mb-stack-lg">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">User Profile</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your account settings, subscription, and data usage.</p>
+</div>
+<!-- Tabbed Interface Wrapper -->
+<div class="glass-panel rounded-xl shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+<!-- Tab Navigation (Internal) -->
+<div class="w-full md:w-64 border-r border-outline-variant/30 bg-surface-container-lowest/50 p-4">
+<nav class="space-y-1">
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-primary bg-primary/5 font-label-md text-label-md text-left transition-all" id="tab-personal" onclick="switchTab('personal')">
+<span class="material-symbols-outlined">person</span>
+                            Personal Info
+                        </button>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md text-left transition-all" id="tab-subscription" onclick="switchTab('subscription')">
+<span class="material-symbols-outlined">card_membership</span>
+                            Subscription
+                        </button>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md text-left transition-all" id="tab-usage" onclick="switchTab('usage')">
+<span class="material-symbols-outlined">analytics</span>
+                            Data Usage
+                        </button>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md text-left transition-all" id="tab-connections" onclick="switchTab('connections')">
+<span class="material-symbols-outlined">link</span>
+                            Connected Accounts
+                        </button>
+</nav>
+</div>
+<!-- Tab Content Area -->
+<div class="flex-1 p-8">
+<!-- Section: Personal Info -->
+<section class="tab-content block" id="content-personal">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Personal Information</h3>
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<img class="w-24 h-24 rounded-full object-cover border-2 border-primary/10" data-alt="A professional headshot of a person with a friendly expression, soft studio lighting, minimalist light grey background, captured in high-definition photography style, perfectly matching the clean and professional SaaS brand aesthetic of PDF Toolkit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-LFXhvNQHCzdg7oJwJbdC3e_NKh72iPWWnafGPCVGRy9Yv48AKUu0FvIE-fK4FT0GdL9kAfnWynhEuTHaHxGwJd5UfWhgwSEJ6nJHZzRDdl0Kc5yvidtdfkZvvucZ-tcRG_-vMmMIdIde26K8qyCY_B13BPXmlon2bGK_lcDHkiauXtlYg3ZWaW3dFkK_hOAzzlNm4ohZ2LV3p51wruv2XcUDu9ANCt2YK8uXGqtn2saPIqlf5utz"/>
+<button class="absolute bottom-0 right-0 p-1.5 bg-primary text-on-primary rounded-full shadow-md hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Johnathan Doe</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Account owner &amp; Lead Administrator</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Full Name</label>
+<input class="w-full px-4 py-2 bg-surface rounded-lg border border-outline-variant focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-body-md outline-none" type="text" value="Johnathan Doe"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Email Address</label>
+<input class="w-full px-4 py-2 bg-surface rounded-lg border border-outline-variant focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-body-md outline-none" type="email" value="john.doe@enterprise.com"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Timezone</label>
+<select class="w-full px-4 py-2 bg-surface rounded-lg border border-outline-variant focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-body-md outline-none appearance-none">
+<option>Pacific Time (PT) - Los Angeles</option>
+<option>Eastern Time (ET) - New York</option>
+<option>GMT+1 - London</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Role</label>
+<div class="px-4 py-2 bg-surface-container-low rounded-lg border border-transparent font-body-md text-on-surface-variant cursor-not-allowed">
+                                        Organization Administrator
+                                    </div>
+</div>
+</div>
+<div class="flex justify-end pt-4">
+<button class="px-6 py-2.5 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity shadow-sm">Save Changes</button>
+</div>
+</div>
+</section>
+<!-- Section: Subscription -->
+<section class="tab-content hidden" id="content-subscription">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Subscription Details</h3>
+<div class="p-6 bg-surface-container-lowest border border-outline-variant rounded-xl mb-8 flex justify-between items-center">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Pro Individual Plan</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Billed monthly • Next invoice on Oct 12, 2024</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline-md text-headline-md text-on-surface">$24.00/mo</p>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded text-[10px] font-bold uppercase tracking-wider">Active</span>
+</div>
+</div>
+<div class="space-y-4">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Billing History</h4>
+<div class="divide-y divide-outline-variant/30">
+<div class="py-4 flex justify-between items-center hover:bg-surface-container-lowest/50 px-2 rounded-lg transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Invoice #TK-92831</p>
+<p class="text-[12px] text-on-surface-variant">September 12, 2024</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-body-md text-on-surface">$24.00</span>
+<button class="p-2 hover:bg-surface-container-high rounded-full text-primary transition-all opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<div class="py-4 flex justify-between items-center hover:bg-surface-container-lowest/50 px-2 rounded-lg transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Invoice #TK-91240</p>
+<p class="text-[12px] text-on-surface-variant">August 12, 2024</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-body-md text-on-surface">$24.00</span>
+<button class="p-2 hover:bg-surface-container-high rounded-full text-primary transition-all opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline py-2">View all invoices</button>
+</div>
+</section>
+<!-- Section: Usage -->
+<section class="tab-content hidden" id="content-usage">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Data Processing</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Usage for current billing cycle (Sep 12 - Oct 12)</p>
+</div>
+<div class="text-right">
+<p class="text-headline-sm font-headline-sm text-primary">7.2 GB / 10 GB</p>
+</div>
+</div>
+<!-- Progress Visualization -->
+<div class="w-full bg-surface-container h-4 rounded-full overflow-hidden mb-12 flex">
+<div class="h-full bg-primary" style="width: 72%;"></div>
+<div class="h-full bg-primary/20" style="width: 8%;"></div> <!-- Predicted remaining -->
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Documents Processed</p>
+<p class="text-headline-md font-headline-md text-on-surface">1,248</p>
+<p class="text-[12px] text-secondary-container-on mt-2 flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 12% from last month
+                                </p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">OCR Pages Extracted</p>
+<p class="text-headline-md font-headline-md text-on-surface">4,812</p>
+<p class="text-[12px] text-on-surface-variant mt-2">Included in Pro plan</p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/30">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Cloud Storage Used</p>
+<p class="text-headline-md font-headline-md text-on-surface">2.4 GB</p>
+<p class="text-[12px] text-on-surface-variant mt-2">24% of 10 GB quota</p>
+</div>
+</div>
+<div class="bg-primary/5 p-6 rounded-xl border border-primary/10 flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">bolt</span>
+<div>
+<h5 class="font-headline-sm text-headline-sm text-primary">Need more power?</h5>
+<p class="font-body-md text-body-md text-on-surface-variant">Upgrade to Enterprise for unlimited processing and dedicated API throughput.</p>
+</div>
+<button class="ml-auto px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md whitespace-nowrap">Upgrade Plan</button>
+</div>
+</section>
+<!-- Section: Connected Accounts -->
+<section class="tab-content hidden" id="content-connections">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Connected Accounts</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">Streamline your workflow by connecting your document sources.</p>
+<div class="space-y-4">
+<!-- Google Account -->
+<div class="flex items-center justify-between p-4 border border-outline-variant/50 rounded-xl hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-outline-variant/20 shadow-sm">
+<img alt="Google Drive" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh9WcVskncJwcMAap8kD1JlFXWY4FXgWRCDpmVo3NrTchNVj4LtNPwq-dZWO5b9mJZU-QcvOIfoik_ceV_0lIoXESWeKiuD-vBHCeVq9Ul0uYmQNaXxRCUu-IMRkBeosbC1K7_NcLZN4Lb9vQiCVjHvZX0V41f2iAqAl00iU5NjmE6nR7u2PGHGV58V6IsecGLk1tVOMcHwiL77JWrB_fZFW1Y4KqUH1vF0yxChLfJ8HsYN8c69lUb"/>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm text-on-surface">Google Drive</p>
+<p class="font-body-md text-body-md text-secondary">Connected as john.doe@gmail.com</p>
+</div>
+</div>
+<button class="px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg font-label-md text-label-md hover:bg-error-container hover:text-on-error-container hover:border-transparent transition-all">Disconnect</button>
+</div>
+<!-- Dropbox -->
+<div class="flex items-center justify-between p-4 border border-outline-variant/50 rounded-xl hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#0061FF] rounded-lg flex items-center justify-center border border-outline-variant/20 shadow-sm">
+<img alt="Dropbox" class="w-6 h-6 invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRZuYzNAdFein4iExANDdvMXPojLh3mNcT1qsxnsW8GTn4XXtZTKP_QI1gZqsweu4WJsS-C72-4bKSWt_zYot03Rjv_vbNHHvAo16YmysWl5x_8_fZATxslxG1YDl9yDn_eVD1KCKpDyZhizobpsamd6jHyCTOn8CKprBI7HTkMARs5b4bOGDEzlgeKNpisFO67J1uPhIlwHbua8V4olH1jXSBGoRiybsLNjLtvkeST_okWan0sQIN"/>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm text-on-surface">Dropbox</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Access your files directly from Dropbox</p>
+</div>
+</div>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-all">Connect</button>
+</div>
+<!-- Box -->
+<div class="flex items-center justify-between p-4 border border-outline-variant/50 rounded-xl hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-outline-variant/20 shadow-sm">
+<span class="material-symbols-outlined text-primary text-2xl">folder_zip</span>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm text-on-surface">OneDrive</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Sync files from your Microsoft 365 account</p>
+</div>
+</div>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-all">Connect</button>
+</div>
+</div>
+<div class="mt-12 p-6 bg-surface-container-high/30 rounded-xl border border-dashed border-outline-variant">
+<h5 class="font-label-md text-label-md text-on-surface mb-2">About Connections</h5>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                PDF Toolkit uses industry-standard OAuth2 to securely connect to your accounts. We never store your passwords, and you can revoke access at any time through this dashboard or your provider's security settings.
+                            </p>
+</div>
+</section>
+</div>
+</div>
+</div>
+<!-- Shared Footer -->
+<footer class="w-full py-stack-lg grid grid-cols-1 md:grid-cols-4 gap-gutter border-t border-outline-variant mt-16">
+<div class="md:col-span-1">
+<h4 class="font-headline-sm text-on-surface mb-2">PDF Toolkit</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">The elite standard for document processing and secure file management.</p>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-label-md text-on-surface uppercase opacity-50 mb-2">Company</span>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Security</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-label-md text-on-surface uppercase opacity-50 mb-2">Legal</span>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Status</a>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-60">© 2024 PDF Toolkit. Securely processing files globally.</p>
+</div>
+</footer>
+</main>
+<script>
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            
+            // Remove active styles from all buttons
+            document.querySelectorAll('[id^="tab-"]').forEach(button => {
+                button.classList.remove('text-primary', 'bg-primary/5');
+                button.classList.add('text-on-surface-variant', 'hover:bg-surface-container-low');
+            });
+
+            // Show target content
+            const targetContent = document.getElementById('content-' + tabId);
+            targetContent.classList.remove('hidden');
+            targetContent.classList.add('block');
+
+            // Apply active styles to clicked button
+            const targetButton = document.getElementById('tab-' + tabId);
+            targetButton.classList.add('text-primary', 'bg-primary/5');
+            targetButton.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-low');
+        }
+
+        // Add small hover interaction for cards
+        document.querySelectorAll('.tab-content > section > div > div').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                if(card.classList.contains('border')) {
+                    card.style.boxShadow = "0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02)";
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.boxShadow = "";
+            });
+        });
+    </script>
+</body></html>
