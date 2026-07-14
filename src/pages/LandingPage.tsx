@@ -24,14 +24,14 @@ import { CORE_PDF_TOOLS } from '../config/pdf-tools'
 
 // Secondary toolkit content used by the marketing page.
 const smallTools = [
-  { title: 'Edit PDF', text: 'Modify text and images directly.', icon: PenLine, tone: 'bg-sky-100 text-sky-700' },
-  { title: 'eSign', text: 'Legally binding signatures.', icon: FileCheck2, tone: 'bg-emerald-100 text-emerald-700' },
-  { title: 'Protect', text: 'AES-256 encryption and permissions.', icon: LockKeyhole, tone: 'bg-amber-100 text-amber-700' },
-  { title: 'OCR', text: 'Optical character recognition.', icon: ScanText, tone: 'bg-violet-100 text-violet-700' },
-  { title: 'Delete Pages', text: 'Quick page removal.', icon: Files, tone: 'bg-rose-100 text-rose-700' },
-  { title: 'Watermark', text: 'Custom brand overlays.', icon: Stamp, tone: 'bg-cyan-100 text-cyan-700' },
-  { title: 'Flatten', text: 'Remove interactive layers.', icon: FileText, tone: 'bg-indigo-100 text-indigo-700' },
-  { title: 'Rearrange', text: 'Drag-and-drop ordering.', icon: Combine, tone: 'bg-orange-100 text-orange-700' },
+  { title: 'Edit PDF', text: 'Modify text and images directly.', icon: PenLine, iconClass: 'bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-200/70', surfaceClass: 'bg-gradient-to-br from-sky-100/90 via-sky-50/55 to-white hover:border-sky-300 hover:shadow-sky-200/60' },
+  { title: 'eSign', text: 'Legally binding signatures.', icon: FileCheck2, iconClass: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-200/70', surfaceClass: 'bg-gradient-to-br from-emerald-100/90 via-emerald-50/55 to-white hover:border-emerald-300 hover:shadow-emerald-200/60' },
+  { title: 'Protect', text: 'AES-256 encryption and permissions.', icon: LockKeyhole, iconClass: 'bg-gradient-to-br from-amber-400 to-orange-600 text-white shadow-lg shadow-amber-200/70', surfaceClass: 'bg-gradient-to-br from-amber-100/90 via-amber-50/55 to-white hover:border-amber-300 hover:shadow-amber-200/60' },
+  { title: 'OCR', text: 'Optical character recognition.', icon: ScanText, iconClass: 'bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-violet-200/70', surfaceClass: 'bg-gradient-to-br from-violet-100/90 via-violet-50/55 to-white hover:border-violet-300 hover:shadow-violet-200/60' },
+  { title: 'Delete Pages', text: 'Quick page removal.', icon: Files, iconClass: 'bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-lg shadow-rose-200/70', surfaceClass: 'bg-gradient-to-br from-rose-100/90 via-rose-50/55 to-white hover:border-rose-300 hover:shadow-rose-200/60' },
+  { title: 'Watermark', text: 'Custom brand overlays.', icon: Stamp, iconClass: 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-200/70', surfaceClass: 'bg-gradient-to-br from-cyan-100/90 via-cyan-50/55 to-white hover:border-cyan-300 hover:shadow-cyan-200/60' },
+  { title: 'Flatten', text: 'Remove interactive layers.', icon: FileText, iconClass: 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-200/70', surfaceClass: 'bg-gradient-to-br from-indigo-100/90 via-indigo-50/55 to-white hover:border-indigo-300 hover:shadow-indigo-200/60' },
+  { title: 'Rearrange', text: 'Drag-and-drop ordering.', icon: Combine, iconClass: 'bg-gradient-to-br from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-200/70', surfaceClass: 'bg-gradient-to-br from-orange-100/90 via-orange-50/55 to-white hover:border-orange-300 hover:shadow-orange-200/60' },
 ]
 
 // Frequently asked questions remain plain data so the markup stays focused.
@@ -45,7 +45,7 @@ export function LandingPage() {
   return (
     <main>
       {/* Hero: product promise and animated local-processing visualization. */}
-      <section className="relative overflow-hidden border-b border-line bg-[linear-gradient(135deg,#f7fbff_0%,#f4f0ff_48%,#fff7ef_100%)] px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
+      <section className="relative overflow-hidden border-b border-line bg-[linear-gradient(135deg,#f7fbff_0%,#f4f0ff_48%,#fff7ef_100%)] px-5 pb-16 pt-28 sm:px-8 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
         <div className="pointer-events-none absolute -left-24 top-16 size-72 rounded-full bg-cyan-300/25 blur-3xl" />
         <div className="pointer-events-none absolute -right-24 top-4 size-80 rounded-full bg-violet-300/30 blur-3xl" />
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
@@ -92,12 +92,12 @@ export function LandingPage() {
             </span>
           </div>
           <div className="mt-9 grid gap-4 md:grid-cols-3">
-            {CORE_PDF_TOOLS.map(({ title, description, publicPath, icon: Icon, landingGradient, iconClass }) => (
-              <Link key={title} to={publicPath} className="group relative overflow-hidden rounded-2xl border border-line bg-white p-6 soft-shadow transition duration-300 hover:-translate-y-1.5 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-950/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+            {CORE_PDF_TOOLS.map(({ title, description, publicPath, icon: Icon, landingGradient, iconClass, cardAccentClass, cardSurfaceClass }) => (
+              <Link key={title} to={publicPath} className={`group relative overflow-hidden rounded-2xl border border-line p-6 soft-shadow transition duration-300 hover:-translate-y-1.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${cardSurfaceClass}`}>
                 <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${landingGradient}`} />
                 <div className="flex items-start justify-between gap-4">
-                  <span className={`grid size-12 place-items-center rounded-xl ${iconClass}`}><Icon className="size-5" aria-hidden /></span>
-                  <ArrowRight className="size-5 text-muted transition duration-300 group-hover:translate-x-1 group-hover:text-primary" aria-hidden />
+                  <span className={`grid size-12 place-items-center rounded-xl transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-110 group-hover:rotate-3 ${iconClass}`}><Icon className="size-5" aria-hidden /></span>
+                  <ArrowRight className={`size-5 opacity-55 transition duration-300 group-hover:translate-x-1 group-hover:opacity-100 ${cardAccentClass}`} aria-hidden />
                 </div>
                 <h3 className="mt-6 font-display text-xl font-semibold">{title}</h3>
                 <p className="mt-2 min-h-10 text-sm leading-5 text-muted">{description}</p>
@@ -115,10 +115,10 @@ export function LandingPage() {
           <p className="mt-2 text-sm text-muted">Engineered for the modern workflow where speed meets accuracy.</p>
           <div className="mt-10 grid gap-4 lg:grid-cols-12">
             <FeatureCard className="lg:col-span-8" icon={Combine} tone="blue" title="Seamless Merge" text="Combine hundreds of documents into a single, cohesive PDF with preserved bookmarks, transitions, and metadata." />
-            <FeatureCard className="lg:col-span-4" icon={Scissors} tone="amber" title="Precision Split" text="Explode large files into individual pages or specific ranges with surgical accuracy." />
-            <FeatureCard className="lg:col-span-4" icon={Minimize2} tone="green" title="Smart Compress" text="Reduce file size while maintaining visual quality." />
+            <FeatureCard className="lg:col-span-4" icon={Scissors} tone="emerald" title="Precision Split" text="Explode large files into individual pages or specific ranges with surgical accuracy." />
+            <FeatureCard className="lg:col-span-4" icon={Minimize2} tone="orange" title="Smart Compress" text="Reduce file size while maintaining visual quality." />
             <article className="relative overflow-hidden rounded-xl bg-[#292d2e] p-6 text-white lg:col-span-8">
-              <span className="grid size-9 place-items-center rounded-lg bg-primary text-white"><FileImage className="size-4" aria-hidden /></span>
+              <span className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-violet-600 text-white shadow-lg shadow-fuchsia-950/30"><FileImage className="size-4" aria-hidden /></span>
               <h3 className="mt-6 font-display text-lg font-medium">Universal Conversion</h3>
               <p className="mt-2 max-w-lg text-sm leading-6 text-white/65">Convert PDF to Office, CAD, or high-res images. One-click bidirectional processing that respects original formatting.</p>
               <div className="mt-6 flex flex-wrap gap-2">{['DOCX', 'XLSX', 'PPTX', 'JPG'].map((item) => <span key={item} className="rounded-md border border-white/14 bg-white/8 px-3 py-2 text-[10px]">{item}</span>)}</div>
@@ -135,9 +135,9 @@ export function LandingPage() {
             <a className="hidden items-center gap-1 text-xs font-medium text-primary sm:inline-flex" href="#try-free-tools">Try free tools <ArrowRight className="size-3.5" /></a>
           </div>
           <div className="mt-9 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {smallTools.map(({ title, text, icon: Icon, tone }) => (
-              <article key={title} className="group rounded-xl border border-line bg-white p-5 soft-shadow transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg">
-                <span className={`grid size-10 place-items-center rounded-xl transition duration-300 group-hover:scale-110 ${tone}`}><Icon className="size-4" aria-hidden /></span>
+            {smallTools.map(({ title, text, icon: Icon, iconClass, surfaceClass }) => (
+              <article key={title} className={`group rounded-xl border border-line p-5 soft-shadow transition duration-300 hover:-translate-y-1 hover:shadow-lg ${surfaceClass}`}>
+                <span className={`grid size-10 place-items-center rounded-xl transition-all duration-300 group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:rotate-3 ${iconClass}`}><Icon className="size-4" aria-hidden /></span>
                 <h3 className="mt-4 font-display text-sm font-medium">{title}</h3>
                 <p className="mt-1.5 text-xs leading-5 text-muted">{text}</p>
               </article>

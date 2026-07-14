@@ -28,8 +28,8 @@ export function WorkflowPreview() {
         </div>
 
         <div className="relative mt-8 min-h-[310px] sm:min-h-[350px]">
-          <ToolStatusCard className="hero-float left-0 top-7 [--hero-rotate:-2deg] sm:left-2" icon={Combine} iconClass="text-cyan-300" title="Merge" status="Files selected" />
-          <ToolStatusCard className="hero-float-delayed right-0 top-16 [--hero-rotate:2deg] sm:right-2" icon={Minimize2} iconClass="text-orange-300" title="Compress" status="Size optimized" />
+          <ToolStatusCard className="hero-float left-0 top-7 [--hero-rotate:-2deg] sm:left-2" icon={Combine} iconClass="bg-gradient-to-br from-cyan-400 to-blue-500 text-white" title="Merge" status="Files selected" />
+          <ToolStatusCard className="hero-float-delayed right-0 top-16 [--hero-rotate:2deg] sm:right-2" icon={Minimize2} iconClass="bg-gradient-to-br from-orange-400 to-rose-500 text-white" title="Compress" status="Size optimized" />
 
           <div className="absolute inset-x-12 top-3 mx-auto max-w-[260px] sm:inset-x-24">
             <div className="absolute inset-0 translate-x-5 translate-y-4 rotate-6 rounded-2xl bg-violet-400/60" />
@@ -46,7 +46,7 @@ export function WorkflowPreview() {
             </div>
           </div>
 
-          <ToolStatusCard className="hero-float bottom-2 left-3 [--hero-rotate:1deg] sm:left-10" icon={Scissors} iconClass="text-emerald-300" title="Split" status="Pages selected" />
+          <ToolStatusCard className="hero-float bottom-2 left-3 [--hero-rotate:1deg] sm:left-10" icon={Scissors} iconClass="bg-gradient-to-br from-emerald-400 to-teal-500 text-white" title="Split" status="Pages selected" />
         </div>
 
         <div className="relative mt-4 rounded-xl border border-white/10 bg-white/8 p-3">
@@ -62,7 +62,7 @@ export function WorkflowPreview() {
 function ToolStatusCard({ className, icon: Icon, iconClass, status, title }: { className: string; icon: LucideIcon; iconClass: string; status: string; title: string }) {
   return (
     <div className={`absolute z-20 rounded-xl border border-white/15 bg-white/12 p-3 text-white shadow-xl backdrop-blur-md ${className}`}>
-      <Icon className={`size-4 ${iconClass}`} aria-hidden />
+      <span className={`grid size-7 place-items-center rounded-lg shadow-lg ${iconClass}`}><Icon className="size-3.5" aria-hidden /></span>
       <p className="mt-2 text-[10px] font-semibold">{title}</p>
       <p className="mt-0.5 text-[8px] text-white/55">{status}</p>
     </div>
@@ -70,9 +70,14 @@ function ToolStatusCard({ className, icon: Icon, iconClass, status, title }: { c
 }
 
 // Feature cards share tone rules while allowing different grid widths.
-export function FeatureCard({ icon: Icon, tone, title, text, className }: { icon: LucideIcon; tone: 'blue' | 'amber' | 'green'; title: string; text: string; className?: string }) {
-  const colors = { blue: 'bg-blue-50 text-primary', amber: 'bg-amber-50 text-amber-700', green: 'bg-emerald-50 text-emerald-700' }
-  return <article className={`rounded-xl border border-line bg-[#f7f8f9] p-6 ${className ?? ''}`}><span className={`grid size-9 place-items-center rounded-lg ${colors[tone]}`}><Icon className="size-4" aria-hidden /></span><h3 className="mt-6 font-display text-lg font-medium">{title}</h3><p className="mt-2 max-w-xl text-sm leading-6 text-muted">{text}</p></article>
+export function FeatureCard({ icon: Icon, tone, title, text, className }: { icon: LucideIcon; tone: 'blue' | 'emerald' | 'orange'; title: string; text: string; className?: string }) {
+  const colors = {
+    blue: { icon: 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-blue-200/70', surface: 'bg-gradient-to-br from-blue-100/90 via-blue-50/55 to-white hover:border-blue-300 hover:shadow-blue-200/60' },
+    emerald: { icon: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-emerald-200/70', surface: 'bg-gradient-to-br from-emerald-100/90 via-emerald-50/55 to-white hover:border-emerald-300 hover:shadow-emerald-200/60' },
+    orange: { icon: 'bg-gradient-to-br from-orange-500 to-rose-500 text-white shadow-orange-200/70', surface: 'bg-gradient-to-br from-orange-100/90 via-orange-50/55 to-white hover:border-orange-300 hover:shadow-orange-200/60' },
+  }
+  const color = colors[tone]
+  return <article className={`group rounded-xl border border-line p-6 soft-shadow transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${color.surface} ${className ?? ''}`}><span className={`grid size-10 place-items-center rounded-xl shadow-lg transition-all duration-300 group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:rotate-3 ${color.icon}`}><Icon className="size-4" aria-hidden /></span><h3 className="mt-6 font-display text-lg font-medium">{title}</h3><p className="mt-2 max-w-xl text-sm leading-6 text-muted">{text}</p></article>
 }
 
 // Landing-page plan cards are a preview; account creation stays optional.
