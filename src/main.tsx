@@ -4,7 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { App } from './app/App'
 import { AuthProvider } from './features/auth/AuthProvider'
+import { initializePreferences } from './lib/preferences'
 import './styles.css'
+
+initializePreferences()
 
 const root = document.getElementById('root')
 

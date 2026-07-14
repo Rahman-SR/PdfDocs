@@ -4,6 +4,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/auth/auth-context'
 
 export function ProtectedRoute() {
+  // Workspace routes wait for session recovery before allowing or redirecting access.
   const { status } = useAuth()
   const location = useLocation()
 

@@ -6,6 +6,7 @@ import { useAuth } from '../features/auth/auth-context'
 import { getSafeRedirect } from '../lib/auth-redirect'
 
 export function AuthCallbackPage() {
+  // Supabase redirects land here while the provider restores the session.
   const { status } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()

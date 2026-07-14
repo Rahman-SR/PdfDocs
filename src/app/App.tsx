@@ -19,16 +19,22 @@ import { ProtectedRoute } from './ProtectedRoute'
 export function App() {
   return (
     <Routes>
+      {/* Public pages and local PDF tools do not require authentication. */}
       <Route element={<PublicLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="pricing" element={<PricingPage />} />
+        <Route path="free-tools/merge" element={<ToolWorkspacePage mode="merge" />} />
+        <Route path="free-tools/split" element={<ToolWorkspacePage mode="split" />} />
+        <Route path="free-tools/compress" element={<ToolWorkspacePage mode="compress" />} />
       </Route>
 
+      {/* Authentication and password-recovery routes. */}
       <Route path="login" element={<LoginPage />} />
       <Route path="forgot-password" element={<PasswordResetPage />} />
       <Route path="update-password" element={<UpdatePasswordPage />} />
       <Route path="auth/callback" element={<AuthCallbackPage />} />
 
+      {/* Signed-in workspace routes share the dashboard navigation shell. */}
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
@@ -41,6 +47,7 @@ export function App() {
         </Route>
       </Route>
 
+      {/* Unknown paths fall back to a single not-found page. */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )

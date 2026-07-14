@@ -2,6 +2,7 @@
 @import '@fontsource-variable/inter';
 @import 'tailwindcss';
 
+/* Theme tokens shared by Tailwind utilities and handwritten component styles. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -19,6 +20,7 @@
   --color-line: #e1e4ea;
 }
 
+/* Global document defaults and interaction behavior. */
 :root {
   font-family: var(--font-sans);
   color: var(--color-ink);
@@ -67,6 +69,7 @@ a {
   background: #d8e2ff;
 }
 
+/* Reusable surfaces and shadow treatments. */
 .precision-grid {
   background-image: radial-gradient(circle, rgb(0 88 190 / 0.09) 1px, transparent 1px);
   background-size: 18px 18px;
@@ -80,6 +83,58 @@ a {
   box-shadow: 0 18px 50px -24px rgb(20 34 55 / 0.22);
 }
 
+/* Landing-page visualization motion. */
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--hero-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-10px) rotate(var(--hero-rotate, 0deg));
+  }
+}
+
+@keyframes hero-pulse {
+  0%,
+  100% {
+    opacity: 0.48;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+.hero-float {
+  animation: hero-float 4.8s ease-in-out infinite;
+}
+
+.hero-float-delayed {
+  animation: hero-float 5.4s ease-in-out 0.8s infinite;
+}
+
+.hero-pulse {
+  animation: hero-pulse 3.2s ease-in-out infinite;
+}
+
+/* PDF preview drawer transition. */
+@keyframes preview-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.preview-slide-in {
+  animation: preview-slide-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Shared workspace and authentication fields. */
 .precision-input {
   min-height: 48px;
   width: 100%;
@@ -118,6 +173,7 @@ a {
   box-shadow: 0 0 0 3px rgb(0 88 190 / 0.12);
 }
 
+/* Accessibility: respect visitors who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -127,4 +183,59 @@ a {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* Dark theme overrides for shared surfaces and controls. */
+html.dark {
+  color-scheme: dark;
+  --color-canvas: #0f151d;
+  --color-paper: #0f151d;
+  --color-surface: #18212b;
+  --color-ink: #edf2f7;
+  --color-muted: #aab4c2;
+  --color-line: #344252;
+}
+
+html.dark body,
+html.dark #root {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+html.dark [class*="bg-white"] {
+  background-color: #18212b !important;
+}
+
+html.dark .bg-\[\#f6f7f8\],
+html.dark .bg-\[\#f7f8f9\],
+html.dark .bg-\[\#f5f6f7\],
+html.dark .bg-\[\#f3f4f5\],
+html.dark .bg-\[\#f0f1f2\],
+html.dark .bg-\[\#fbfcfd\] {
+  background-color: #121b25 !important;
+}
+
+html.dark .bg-\[\#e7e8e9\],
+html.dark .bg-\[\#eef3fd\] {
+  background-color: #1c3553 !important;
+}
+
+html.dark .text-\[\#333b49\],
+html.dark .text-\[\#33383c\] {
+  color: #d7dee8 !important;
+}
+
+html.dark .precision-input,
+html.dark .auth-input {
+  border-color: #435266;
+  background: #101821;
+  color: #edf2f7;
+}
+
+html.dark [data-theme-preview] {
+  color: var(--color-ink);
+}
+
+html.dark [data-theme-preview] .bg-white {
+  background-color: #ffffff !important;
 }

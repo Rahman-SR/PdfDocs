@@ -6,6 +6,7 @@ import { buildAuthRedirect } from '../lib/auth-redirect'
 import { supabase } from '../lib/supabase'
 
 export function PasswordResetPage() {
+  // Recovery requests use a single email field and route-aware callback URL.
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)

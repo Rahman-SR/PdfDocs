@@ -1,8 +1,20 @@
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PDFDocument } from 'pdf-lib'
 
+// Public data contracts for PDF processing operations.
 export type PageRange = { from: number; to: number }
 export type PdfBytes = Uint8Array | ArrayBuffer
+export type PdfCompressionOptions = {
+  imageOptimization?: boolean
+  level?: number
+  removeMetadata?: boolean
+}
+export type PdfCompressionResult = {
+  bytes: Uint8Array
+  imageOptimizationApplied: boolean
+  imageOptimizationError?: string
+}
 
+// Core document operations. These functions contain no UI or fixture data.
 export async function mergePdfDocuments(inputs: PdfBytes[]) {
   if (inputs.length < 2) {
     throw new Error('At least two PDF documents are required.')
@@ -44,35 +56,53 @@ export async function splitPdfByRanges(input: PdfBytes, ranges: PageRange[]) {
   return Promise.all(ranges.map((range) => extractPdfPages(input, pagesInRange(range))))
 }
 
+export async function compressPdfDocument(input: PdfBytes, options: PdfCompressionOptions = {}): Promise<PdfCompressionResult> {
+  const original = input instanceof Uint8Array ? new Uint8Array(input) : new Uint8Array(input.slice(0))
+  const candidates: Array<{ bytes: Uint8Array; imageOptimizationApplied: boolean }> = [
+    { bytes: original, imageOptimizationApplied: false },
+  ]
+  const document = await PDFDocument.load(original)
+
+  if (options.removeMetadata) {
+    document.setTitle('')
+    document.setAuthor('')
+    document.setSubject('')
+    document.setKeywords([])
+    document.setCreator('')
+    document.setProducer('')
+  }
+
+  const structurallyOptimized = await document.save({ addDefaultPage: false, useObjectStreams: true, updateFieldAppearances: false })
+  candidates.push({ bytes: structurallyOptimized, imageOptimizationApplied: false })
+
+  let imageOptimizationError: string | undefined
+  if (options.imageOptimization) {
+    try {
+      const { rasterizePdfForCompression } = await import('./pdf-raster-compression')
+      const rasterized = await rasterizePdfForCompression(original, options.level ?? 50)
+      candidates.push({ bytes: rasterized, imageOptimizationApplied: true })
+    } catch (error) {
+      imageOptimizationError = error instanceof Error ? error.message : 'Image optimization failed.'
+    }
+  }
+
+  const smallest = candidates.reduce((current, candidate) => (
+    candidate.bytes.byteLength < current.bytes.byteLength ? candidate : current
+  ))
+
+  return { ...smallest, imageOptimizationError }
+}
+
 export async function getPdfPageCount(input: PdfBytes) {
   const document = await PDFDocument.load(input)
   return document.getPageCount()
-}
-
-export async function createDemoPdf(pageCount: number, title: string) {
-  if (!Number.isInteger(pageCount) || pageCount < 1) {
-    throw new Error('A PDF must contain at least one page.')
-  }
-
-  const document = await PDFDocument.create()
-  const font = await document.embedFont(StandardFonts.Helvetica)
-  const boldFont = await document.embedFont(StandardFonts.HelveticaBold)
-
-  for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
-    const page = document.addPage([595, 842])
-    page.drawText(title, { x: 48, y: 770, size: 18, font: boldFont, color: rgb(0.04, 0.25, 0.52) })
-    page.drawText(`Sample document - page ${pageNumber} of ${pageCount}`, { x: 48, y: 735, size: 11, font })
-    page.drawText('Created locally by PDF Toolkit for testing.', { x: 48, y: 705, size: 10, font, color: rgb(0.35, 0.39, 0.45) })
-    page.drawText(String(pageNumber), { x: 286, y: 36, size: 10, font, color: rgb(0.35, 0.39, 0.45) })
-  }
-
-  return document.save()
 }
 
 export function pagesInRange({ from, to }: PageRange) {
   return Array.from({ length: to - from + 1 }, (_, index) => from + index)
 }
 
+// Browser adapters keep file input and download details out of the core operations.
 export async function readFileBytes(file: File) {
   if (typeof file.arrayBuffer === 'function') {
     return new Uint8Array(await file.arrayBuffer())
@@ -98,6 +128,7 @@ export function downloadPdf(bytes: Uint8Array, filename: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
+// Internal validation helpers provide consistent page-boundary errors.
 function validateRange(range: PageRange, pageCount: number) {
   if (!Number.isInteger(range.from) || !Number.isInteger(range.to) || range.from < 1 || range.to < range.from || range.to > pageCount) {
     throw new Error(`Page range must be between 1 and ${pageCount}.`)

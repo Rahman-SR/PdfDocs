@@ -2,10 +2,9 @@ import { PDFDocument } from 'pdf-lib'
 import { describe, expect, it, vi } from 'vitest'
 
 import {
-  createDemoPdf,
+  compressPdfDocument,
   downloadPdf,
   extractPdfPages,
-  getPdfPageCount,
   mergePdfDocuments,
   splitPdfByRanges,
 } from './pdf-processing'
@@ -47,9 +46,12 @@ describe('PDF processing', () => {
     await expect(splitPdfByRanges(source, [{ from: 1, to: 3 }])).rejects.toThrow('between 1 and 2')
   })
 
-  it('creates sample PDFs used by the live demo workflow', async () => {
-    const sample = await createDemoPdf(4, 'Sample report')
-    await expect(getPdfPageCount(sample)).resolves.toBe(4)
+  it('creates an optimized PDF while preserving every page', async () => {
+    const source = await makePdf([300, 400, 500])
+    const compressed = await compressPdfDocument(source, { removeMetadata: true })
+
+    await expect(pageWidths(compressed.bytes)).resolves.toEqual([300, 400, 500])
+    expect(compressed.bytes.byteLength).toBeLessThanOrEqual(source.byteLength)
   })
 
   it('starts a browser download with the requested PDF filename', () => {

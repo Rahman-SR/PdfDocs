@@ -10,6 +10,7 @@ import { isSupabaseConfigured, supabase } from '../../lib/supabase'
 import { AuthContext, type AuthStatus } from './auth-context'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // The provider owns the Supabase session lifecycle for the entire application.
   const [status, setStatus] = useState<AuthStatus>(
     isSupabaseConfigured ? 'loading' : 'unconfigured',
   )

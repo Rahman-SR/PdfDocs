@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 
 interface BrandProps {
   compact?: boolean
-  plan?: string
 }
 
-export function Brand({ compact = false, plan }: BrandProps) {
+// Shared product mark used by both public and authenticated layouts.
+export function Brand({ compact = false }: BrandProps) {
   return (
     <Link
       to="/"
@@ -19,7 +19,6 @@ export function Brand({ compact = false, plan }: BrandProps) {
       {!compact && (
         <span>
           <span className="block font-display text-[15px] font-semibold tracking-[-0.02em]">PDF Toolkit</span>
-          {plan && <span className="mt-0.5 block text-xs text-muted">{plan}</span>}
         </span>
       )}
     </Link>

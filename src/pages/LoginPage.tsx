@@ -6,10 +6,12 @@ import { useAuth } from '../features/auth/auth-context'
 import { buildAuthRedirect, getSafeRedirect } from '../lib/auth-redirect'
 import { supabase } from '../lib/supabase'
 
+// Login and account creation share the same validated form structure.
 type AuthMode = 'signin' | 'signup'
 interface LocationState { from?: { pathname?: string }; message?: string }
 
 export function LoginPage() {
+  // Form state and authentication feedback.
   const { status } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
@@ -81,6 +83,7 @@ export function LoginPage() {
   )
 }
 
+// Shared field chrome keeps labels, icons, and optional actions aligned.
 function AuthField({ label, icon: Icon, action, children }: { label: string; icon: typeof Mail; action?: ReactNode; children: ReactNode }) {
   return <label className="relative block"><span className="mb-2 flex items-center justify-between text-xs font-medium uppercase tracking-[0.08em]"><span>{label}</span>{action}</span><span className="relative block"><Icon className="pointer-events-none absolute left-3 top-1/2 z-10 size-4 -translate-y-1/2 text-muted" />{children}</span></label>
 }

@@ -5,16 +5,19 @@ import { useAuth } from '../features/auth/auth-context'
 import { Brand } from './Brand'
 
 export function PublicLayout() {
+  // Authentication state only changes the header action destination.
   const { status } = useAuth()
   const isSignedIn = status === 'authenticated'
 
   return (
     <div className="min-h-screen bg-canvas text-ink">
+      {/* Public navigation remains visible while visitors use free tools. */}
       <header className="sticky top-0 z-40 border-b border-line/90 bg-white/92 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-8 lg:px-10">
           <Brand />
           <nav className="hidden items-center gap-7 text-xs font-medium text-[#4f5661] md:flex" aria-label="Primary navigation">
-            <a className="border-b-2 border-primary py-[22px] text-primary" href="/#features">Features</a>
+            <a className="transition hover:text-primary" href="/#try-free-tools">Free tools</a>
+            <a className="transition hover:text-primary" href="/#features">Features</a>
             <Link className="transition hover:text-primary" to="/pricing">Pricing</Link>
             <a className="transition hover:text-primary" href="/#enterprise">Enterprise</a>
             <a className="transition hover:text-primary" href="/#about">About</a>
@@ -36,8 +39,10 @@ export function PublicLayout() {
         </div>
       </header>
 
+      {/* Child public route content. */}
       <Outlet />
 
+      {/* Shared product and legal footer. */}
       <footer id="about" className="border-t border-line bg-[#f3f4f5]">
         <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
           <div className="grid gap-9 sm:grid-cols-2 lg:grid-cols-4">

@@ -6,6 +6,7 @@ import { useAuth } from '../features/auth/auth-context'
 import { supabase } from '../lib/supabase'
 
 export function UpdatePasswordPage() {
+  // Password updates require a valid recovery session and matching new passwords.
   const { status } = useAuth()
   const navigate = useNavigate()
   const [password, setPassword] = useState('')
