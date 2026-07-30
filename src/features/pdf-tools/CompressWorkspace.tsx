@@ -1,10 +1,10 @@
 import { CheckCircle2, Download, LoaderCircle, LockKeyhole, Minimize2 } from 'lucide-react'
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 
-import { compressPdfDocument, downloadPdf, getPdfPageCount, readFileBytes } from '../../lib/pdf-processing'
-import { FreeUsageNotice, PdfPreviewFrame, PdfUploadEmptyState, SwitchRow } from './WorkspaceUi'
+import { compressPdfDocument, downloadPdf } from '../../lib/pdf-processing'
+import { FreeUsageNotice, PdfPreviewContent, SwitchRow } from './WorkspaceUi'
 import { useFreeUsageQuota } from './useFreeUsageQuota'
-import { createPdfObjectUrl, formatFileSize, getErrorMessage, isPdfFile } from './workspace-utils'
+import { formatFileSize, getErrorMessage, isPdfFile, preparePdfPreview } from './workspace-utils'
 
 // Compression source and output are stored only for the active page session.
 type CompressSource = {
@@ -60,15 +60,11 @@ export function CompressWorkspace() {
     setNotice('Opening your PDF locally...')
 
     try {
-      const bytes = await readFileBytes(file)
-      const pageCount = await getPdfPageCount(bytes)
-      const url = createPdfObjectUrl(bytes)
-
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
-      previewUrlRef.current = url
-      setSource({ bytes, name: file.name, pageCount, sizeBytes: file.size, url })
+      const preview = await preparePdfPreview(file, previewUrlRef.current)
+      previewUrlRef.current = preview.url
+      setSource({ ...preview, name: file.name, sizeBytes: file.size })
       setCompressedResult(null)
-      setNotice(`Loaded ${file.name} with ${pageCount} page${pageCount === 1 ? '' : 's'}.`)
+      setNotice(`Loaded ${file.name} with ${preview.pageCount} page${preview.pageCount === 1 ? '' : 's'}.`)
     } catch (error) {
       setNotice(`Could not preview this PDF. ${getErrorMessage(error)}`)
     } finally {
@@ -80,8 +76,9 @@ export function CompressWorkspace() {
   const compressDocument = async () => {
     if (!source) return
 
-    if (!quota.canStartTask()) {
-      setNotice(quota.dailyLimitMessage)
+    const limitMessage = quota.taskLimitMessage(source.sizeBytes)
+    if (limitMessage) {
+      setNotice(limitMessage)
       return
     }
 
@@ -96,7 +93,7 @@ export function CompressWorkspace() {
         removeMetadata,
       })
       setCompressedResult({ bytes: result.bytes, sizeBytes: result.bytes.byteLength })
-      quota.completeTask()
+      quota.completeTask(source.sizeBytes, quota.isLargeFile({ size: source.sizeBytes }))
 
       const savedBytes = source.sizeBytes - result.bytes.byteLength
       const savedPercent = Math.max(0, Math.round((savedBytes / source.sizeBytes) * 100))
@@ -142,18 +139,17 @@ export function CompressWorkspace() {
             {source && <button type="button" onClick={() => inputRef.current?.click()} disabled={previewLoading} className="min-h-10 rounded-lg border border-line bg-white px-4 text-sm font-medium text-primary transition hover:border-primary/30 hover:bg-blue-50 disabled:cursor-wait disabled:opacity-60">Choose another PDF</button>}
             <input ref={inputRef} aria-label="Choose PDF to compress" className="sr-only" type="file" accept="application/pdf" onChange={chooseCompressionSource} />
           </div>
-          <div className="border-b border-line px-5 py-3 sm:px-6"><FreeUsageNotice isFreePlan={quota.isFreePlan} remainingTasks={quota.usage.remainingTasks} /></div>
+          <div className="border-b border-line px-5 py-3 sm:px-6"><FreeUsageNotice isFreePlan={quota.isFreePlan} isSignedIn={quota.isSignedIn} largeFileUses={quota.usage.largeFileUses} plan={quota.plan} remainingTasks={quota.usage.remainingTasks} /></div>
 
           <div className="flex justify-center bg-canvas p-3 sm:p-5">
-            {previewLoading ? (
-              <div className="grid aspect-square w-full max-w-[500px] place-items-center rounded-xl border border-line bg-[#e9edf2] text-center text-muted">
-                <div><LoaderCircle className="mx-auto size-8 animate-spin text-primary" aria-hidden /><p className="mt-3 text-sm">Preparing PDF preview...</p></div>
-              </div>
-            ) : source ? (
-              <PdfPreviewFrame title={`Compression preview: ${source.name}`} url={source.url} />
-            ) : (
-              <PdfUploadEmptyState title="Select a PDF to compress" description="Choose a document to compare its size and tune the output quality." buttonLabel="Choose PDF" onChoose={() => inputRef.current?.click()} />
-            )}
+            <PdfPreviewContent
+              emptyDescription="Choose a document to compare its size and tune the output quality."
+              emptyTitle="Select a PDF to compress"
+              loading={previewLoading}
+              onChoose={() => inputRef.current?.click()}
+              previewTitle={`Compression preview: ${source?.name ?? 'PDF'}`}
+              source={source}
+            />
           </div>
 
           {source && (

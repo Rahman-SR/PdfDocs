@@ -17,10 +17,16 @@ import { SettingsPage } from '../pages/SettingsPage'
 import { ToolWorkspacePage } from '../pages/ToolWorkspacePage'
 import { ToolsPage } from '../pages/ToolsPage'
 import { UpdatePasswordPage } from '../pages/UpdatePasswordPage'
-import { FREE_MAX_FILE_SIZE_BYTES, recordFreeTask } from '../lib/free-usage'
+import { FREE_MAX_FILE_SIZE_BYTES, getUsagePlan, recordFreeTask } from '../lib/free-usage'
 import { createPdfFile, createTestPdf } from '../test/pdf-fixtures'
 
-const authMocks = vi.hoisted(() => ({ resetPasswordForEmail: vi.fn(), signOut: vi.fn(), updateUser: vi.fn() }))
+const authMocks = vi.hoisted(() => ({
+  resetPasswordForEmail: vi.fn(),
+  signInWithPassword: vi.fn(),
+  signOut: vi.fn(),
+  signUp: vi.fn(),
+  updateUser: vi.fn(),
+}))
 
 vi.mock('../lib/supabase', () => ({
   isSupabaseConfigured: true,
@@ -41,17 +47,48 @@ const testUser = {
   created_at: '2026-01-01T00:00:00.000Z',
 } as User
 
+function renderAnonymousLoginPage() {
+  render(
+    <MemoryRouter>
+      <AuthContext.Provider value={{ isRecovery: false, status: 'anonymous', user: null }}>
+        <LoginPage />
+      </AuthContext.Provider>
+    </MemoryRouter>,
+  )
+}
+
+async function uploadAndMerge(user: ReturnType<typeof userEvent.setup>) {
+  await user.upload(screen.getByLabelText('Choose PDF files'), await createMergeFiles())
+  await user.click(screen.getByRole('button', { name: 'Merge PDF' }))
+}
+
+async function renderSplitWorkspace(
+  user: ReturnType<typeof userEvent.setup>,
+  pageCount: number,
+) {
+  render(<ToolWorkspacePage mode="split" />)
+  await user.upload(
+    screen.getByLabelText('Choose PDF to split'),
+    await createUploadFile('Report.pdf', pageCount),
+  )
+}
+
 describe('button interactions', () => {
   beforeEach(() => {
     window.localStorage.clear()
     document.documentElement.classList.remove('dark')
     document.documentElement.lang = 'en'
     authMocks.signOut.mockReset()
+    authMocks.signOut.mockResolvedValue({ error: null })
+    authMocks.signInWithPassword.mockReset()
+    authMocks.signInWithPassword.mockResolvedValue({ data: { user: testUser, session: {} }, error: null })
+    authMocks.signUp.mockReset()
+    authMocks.signUp.mockResolvedValue({ data: { user: testUser, session: null }, error: null })
     authMocks.resetPasswordForEmail.mockReset()
     authMocks.resetPasswordForEmail.mockResolvedValue({ error: null })
     authMocks.updateUser.mockReset()
-    authMocks.updateUser.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({
-      data: { user: { ...testUser, user_metadata: { ...testUser.user_metadata, ...data } } },
+    authMocks.updateUser.mockImplementation(async ({ data }: { data?: Record<string, unknown>; password?: string }) => ({
+      data: { user: { ...testUser, user_metadata: { ...testUser.user_metadata, ...(data ?? {}) } } },
       error: null,
     }))
   })
@@ -76,7 +113,9 @@ describe('button interactions', () => {
     expect(screen.getByRole('heading', { name: 'Merge PDF Documents' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Merge Queue (0)' })).toBeInTheDocument()
     expect(screen.getByText('5 of 5 tasks left today')).toBeInTheDocument()
-    expect(screen.getByText('50 MB max per file')).toBeInTheDocument()
+    expect(screen.getByText('Each PDF under 50 MB')).toBeInTheDocument()
+    expect(screen.getByText('100 MB daily processing')).toBeInTheDocument()
+    expect(screen.getByText('100 MB maximum merge batch')).toBeInTheDocument()
     expect(screen.getByText('Web only')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Welcome back' })).not.toBeInTheDocument()
   })
@@ -90,7 +129,24 @@ describe('button interactions', () => {
     await user.upload(screen.getByLabelText('Choose PDF files'), oversizedFile)
 
     expect(screen.getByRole('heading', { name: 'Merge Queue (0)' })).toBeInTheDocument()
-    expect(screen.getByText('Oversized.pdf exceeds the 50 MB free-plan limit.')).toBeInTheDocument()
+    expect(screen.getByText('Oversized.pdf must be smaller than 50 MB. Sign in to use one file up to 100 MB per day.')).toBeInTheDocument()
+  })
+
+  it('keeps a merge upload batch at or below 100 MB', async () => {
+    const user = userEvent.setup()
+    const first = new File([], 'First.pdf', { type: 'application/pdf' })
+    const second = new File([], 'Second.pdf', { type: 'application/pdf' })
+    const overflow = new File([], 'Overflow.pdf', { type: 'application/pdf' })
+    Object.defineProperty(first, 'size', { value: 49 * 1024 * 1024 })
+    Object.defineProperty(second, 'size', { value: 49 * 1024 * 1024 })
+    Object.defineProperty(overflow, 'size', { value: 3 * 1024 * 1024 })
+    render(<ToolWorkspacePage mode="merge" />)
+
+    await user.upload(screen.getByLabelText('Choose PDF files'), [first, second])
+    await user.upload(screen.getByLabelText('Choose PDF files'), overflow)
+
+    expect(screen.getByRole('heading', { name: 'Merge Queue (2)' })).toBeInTheDocument()
+    expect(screen.getByText('The merge queue cannot exceed 100 MB. Remove a file before adding more.')).toBeInTheDocument()
   })
 
   it('blocks a sixth task for an anonymous visitor', async () => {
@@ -98,28 +154,30 @@ describe('button interactions', () => {
     for (let task = 0; task < 5; task += 1) recordFreeTask()
     render(<ToolWorkspacePage mode="merge" />)
 
-    await user.upload(screen.getByLabelText('Choose PDF files'), await createMergeFiles())
-    await user.click(screen.getByRole('button', { name: 'Merge PDF' }))
+    await uploadAndMerge(user)
 
     expect(screen.getByText('0 of 5 tasks left today')).toBeInTheDocument()
-    expect(screen.getByText('You have used all 5 free tasks for today. Try again tomorrow or upgrade your plan.')).toBeInTheDocument()
+    expect(screen.getByText('You have used all 5 tasks for today. Try again tomorrow.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Download merged PDF/ })).not.toBeInTheDocument()
   })
 
-  it('applies the same five-task limit to a signed-in free user', async () => {
+  it('applies ten tasks and the large-file allowance to a signed-in free user', async () => {
     const user = userEvent.setup()
-    for (let task = 0; task < 5; task += 1) recordFreeTask()
+    const signedPlan = getUsagePlan(true, testUser.id)
+    for (let task = 0; task < 10; task += 1) recordFreeTask(new Date(), signedPlan)
     render(
       <AuthContext.Provider value={{ isRecovery: false, status: 'authenticated', user: testUser }}>
         <ToolWorkspacePage mode="merge" />
       </AuthContext.Provider>,
     )
 
+    expect(screen.getByText('0 of 10 tasks left today')).toBeInTheDocument()
+    expect(screen.getByText('One 100 MB file daily: available')).toBeInTheDocument()
     await user.upload(screen.getByLabelText('Choose PDF files'), await createMergeFiles())
     await user.click(screen.getByRole('button', { name: 'Merge PDF' }))
 
-    expect(screen.getByText('0 of 5 tasks left today')).toBeInTheDocument()
-    expect(screen.getByText('You have used all 5 free tasks for today. Try again tomorrow or upgrade your plan.')).toBeInTheDocument()
+    expect(screen.getByText('0 of 10 tasks left today')).toBeInTheDocument()
+    expect(screen.getByText('You have used all 10 tasks for today. Try again tomorrow.')).toBeInTheDocument()
   })
 
   it('opens the tools directory from the dashboard button', async () => {
@@ -152,16 +210,11 @@ describe('button interactions', () => {
 
   it('switches authentication mode and password visibility', async () => {
     const user = userEvent.setup()
-    render(
-      <MemoryRouter>
-        <AuthContext.Provider value={{ isRecovery: false, status: 'anonymous', user: null }}>
-          <LoginPage />
-        </AuthContext.Provider>
-      </MemoryRouter>,
-    )
+    renderAnonymousLoginPage()
 
     await user.click(screen.getByRole('button', { name: 'Sign up' }))
     expect(screen.getByRole('heading', { name: 'Create account' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Google/i })).not.toBeInTheDocument()
 
     const password = screen.getByLabelText('Password', { selector: 'input' })
     await user.type(password, 'test-password')
@@ -172,6 +225,24 @@ describe('button interactions', () => {
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
     expect(screen.getByRole('heading', { name: 'Welcome back' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute('href', '/forgot-password')
+  })
+
+  it('creates accounts using email and a validated password only', async () => {
+    const user = userEvent.setup()
+    renderAnonymousLoginPage()
+
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
+    await user.type(screen.getByRole('textbox', { name: 'Email address' }), 'Owner@Example.com')
+    await user.type(screen.getByLabelText('Password', { selector: 'input' }), 'StrongPassword1!')
+    await user.type(screen.getByLabelText('Confirm password'), 'StrongPassword1!')
+    await user.click(screen.getByRole('button', { name: 'Create Account' }))
+
+    await waitFor(() => expect(authMocks.signUp).toHaveBeenCalledOnce())
+    expect(authMocks.signUp).toHaveBeenCalledWith(expect.objectContaining({
+      email: 'owner@example.com',
+      password: 'StrongPassword1!',
+    }))
+    expect(await screen.findByText(/Check your email to confirm your account/)).toBeInTheDocument()
   })
 
   it('submits a password recovery request through the configured auth client', async () => {
@@ -195,26 +266,54 @@ describe('button interactions', () => {
       </MemoryRouter>,
     )
 
-    await user.type(screen.getByLabelText('New password'), 'password-one')
-    await user.type(screen.getByLabelText('Confirm password'), 'password-two')
+    await user.type(screen.getByLabelText('New password'), 'StrongPassword1!')
+    await user.type(screen.getByLabelText('Confirm password'), 'StrongPassword2!')
     await user.click(screen.getByRole('button', { name: 'Save new password' }))
 
     expect(screen.getByText('The passwords do not match.')).toBeInTheDocument()
     expect(authMocks.updateUser).not.toHaveBeenCalled()
   })
 
-  it('switches pricing between monthly and yearly billing', async () => {
+  it('verifies the current password before an authenticated password change', async () => {
     const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/change-password']}>
+        <AuthContext.Provider value={{ isRecovery: false, status: 'authenticated', user: testUser }}>
+          <Routes>
+            <Route path="change-password" element={<UpdatePasswordPage mode="account" />} />
+            <Route path="settings" element={<p>Settings page</p>} />
+          </Routes>
+        </AuthContext.Provider>
+      </MemoryRouter>,
+    )
+
+    await user.type(screen.getByLabelText('Current password'), 'OldPassword1!')
+    await user.type(screen.getByLabelText('New password'), 'NewStrongPassword2!')
+    await user.type(screen.getByLabelText('Confirm password'), 'NewStrongPassword2!')
+    await user.click(screen.getByRole('button', { name: 'Save new password' }))
+
+    await screen.findByText('Settings page')
+    expect(authMocks.signInWithPassword).toHaveBeenCalledWith({
+      email: 'owner@example.com',
+      password: 'OldPassword1!',
+    })
+    expect(authMocks.updateUser).toHaveBeenCalledWith({
+      current_password: 'OldPassword1!',
+      email: 'owner@example.com',
+      password: 'NewStrongPassword2!',
+    })
+    expect(authMocks.signOut).toHaveBeenCalledWith({ scope: 'others' })
+  })
+
+  it('shows the current guest and signed-in access limits without paid pricing', () => {
     render(<MemoryRouter><PricingPage /></MemoryRouter>)
 
-    const billingSwitch = screen.getByRole('switch', { name: 'Yearly billing' })
-    expect(billingSwitch).toHaveAttribute('aria-checked', 'false')
-    expect(screen.getByText('Billed ₹999 monthly.')).toBeInTheDocument()
-
-    await user.click(billingSwitch)
-
-    expect(billingSwitch).toHaveAttribute('aria-checked', 'true')
-    expect(screen.getByText('Billed ₹9,590.40 yearly.')).toBeInTheDocument()
+    expect(screen.getByText('PdfDocs does not currently sell subscriptions. Signing in only raises your daily task and processing limits.')).toBeInTheDocument()
+    expect(screen.getByText('Guest access')).toBeInTheDocument()
+    expect(screen.getByText('Account access')).toBeInTheDocument()
+    expect(screen.getByText('One file up to 100 MB once daily')).toBeInTheDocument()
+    expect(screen.queryByText('₹999')).not.toBeInTheDocument()
+    expect(screen.queryByRole('switch', { name: 'Yearly billing' })).not.toBeInTheDocument()
   })
 
   it('clears uploaded files and reports an empty merge attempt', async () => {
@@ -237,8 +336,7 @@ describe('button interactions', () => {
     const download = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
     render(<ToolWorkspacePage mode="merge" />)
 
-    await user.upload(screen.getByLabelText('Choose PDF files'), await createMergeFiles())
-    await user.click(screen.getByRole('button', { name: 'Merge PDF' }))
+    await uploadAndMerge(user)
 
     expect(await screen.findByText('Merged 2 PDFs into 3 pages. Ready to download.')).toBeInTheDocument()
     expect(screen.getByText('4 of 5 tasks left today')).toBeInTheDocument()
@@ -289,9 +387,7 @@ describe('button interactions', () => {
   it('updates split selections and provides split feedback', async () => {
     const user = userEvent.setup()
     const download = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
-    render(<ToolWorkspacePage mode="split" />)
-
-    await user.upload(screen.getByLabelText('Choose PDF to split'), await createUploadFile('Report.pdf', 5))
+    await renderSplitWorkspace(user, 5)
     expect(await screen.findByTitle('Split preview: Report.pdf')).toHaveAttribute('src', expect.stringContaining('blob:'))
     expect(screen.getByTitle('Split preview: Report.pdf')).toHaveClass('aspect-square', 'max-w-[460px]')
     expect(screen.getByTitle('Split preview: Report.pdf').parentElement).toHaveClass('max-w-[500px]')
@@ -313,9 +409,7 @@ describe('button interactions', () => {
   it('downloads split selections as separate PDFs when requested', async () => {
     const user = userEvent.setup()
     const download = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
-    render(<ToolWorkspacePage mode="split" />)
-
-    await user.upload(screen.getByLabelText('Choose PDF to split'), await createUploadFile('Report.pdf', 2))
+    await renderSplitWorkspace(user, 2)
     await user.click(screen.getByRole('button', { name: 'Select page 2' }))
     await user.click(screen.getByRole('button', { name: 'Merge split selections into one file' }))
     await user.click(screen.getByRole('button', { name: 'Split PDF' }))
@@ -404,7 +498,7 @@ describe('button interactions', () => {
     const { unmount } = render(<MemoryRouter><AuthContext.Provider value={{ isRecovery: false, status: 'authenticated', user: testUser }}><SettingsPage /></AuthContext.Provider></MemoryRouter>)
 
     await user.click(screen.getByRole('button', { name: 'Account' }))
-    expect(screen.getByRole('link', { name: 'Change password' })).toHaveAttribute('href', '/forgot-password')
+    expect(screen.getByRole('link', { name: 'Change password' })).toHaveAttribute('href', '/change-password')
     expect(screen.getByRole('link', { name: 'Edit profile' })).toHaveAttribute('href', '/profile')
     unmount()
 

@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  BadgeCheck,
   Check,
   Combine,
   FileCheck2,
@@ -13,13 +12,11 @@ import {
   ScanText,
   Scissors,
   ShieldCheck,
-  Sparkles,
   Stamp,
-  Zap,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-import { FeatureCard, PlanCard, WorkflowPreview } from '../components/landing/LandingComponents'
+import { FeatureCard, PlanCard } from '../components/landing/LandingComponents'
 import { CORE_PDF_TOOLS } from '../config/pdf-tools'
 
 // Secondary toolkit content used by the marketing page.
@@ -37,44 +34,33 @@ const smallTools = [
 // Frequently asked questions remain plain data so the markup stays focused.
 const faqs = [
   ['Is my data secure?', 'Absolutely. Common tools run locally in your browser, while authenticated routes use verified Supabase sessions.'],
-  ['Can I cancel my subscription?', 'Yes. You can change or cancel a paid plan at any time from workspace settings.'],
-  ['Do you offer educational discounts?', 'Student and educator plans are part of the product roadmap.'],
+  ['Do I need an account?', 'No. Guests receive 5 tasks and 100 MB of processing per day. Signing in raises those limits to 10 tasks and 200 MB per day.'],
+  ['Why should I sign in?', 'A signed-in account can process one PDF up to 100 MB once per day. Guest PDFs must each be smaller than 50 MB.'],
 ]
 
 export function LandingPage() {
   return (
     <main>
-      {/* Hero: product promise and animated local-processing visualization. */}
-      <section className="relative overflow-hidden border-b border-line bg-[linear-gradient(135deg,#f7fbff_0%,#f4f0ff_48%,#fff7ef_100%)] px-5 pb-16 pt-28 sm:px-8 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
-        <div className="pointer-events-none absolute -left-24 top-16 size-72 rounded-full bg-cyan-300/25 blur-3xl" />
-        <div className="pointer-events-none absolute -right-24 top-4 size-80 rounded-full bg-violet-300/30 blur-3xl" />
-        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
-          <div className="relative z-10 text-center lg:text-left">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-white/85 px-3 py-1.5 text-[11px] font-semibold text-primary shadow-sm backdrop-blur">
-              <Sparkles className="size-3.5 text-violet-600" aria-hidden /> Free PDF tools. No account needed.
-            </div>
-            <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.045em] sm:text-5xl lg:text-6xl">
-              Make every PDF task
-              <span className="block bg-gradient-to-r from-blue-600 via-violet-600 to-rose-500 bg-clip-text text-transparent">feel effortless.</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-sm leading-6 text-muted sm:text-base lg:mx-0">
-              Merge, split, and compress documents instantly in your browser. Your files stay on your device, and you can start without creating an account.
-            </p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
-              <a href="#try-free-tools" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-primary-strong">
-                Try tools free <ArrowRight className="size-4" aria-hidden />
-              </a>
-              <a href="#workflow-preview" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/80 bg-white/80 px-6 text-sm font-semibold shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-primary">
-                See how it works <Zap className="size-4 text-amber-500" aria-hidden />
-              </a>
-            </div>
-            <div className="mt-7 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[11px] font-medium text-muted lg:justify-start">
-              <span className="inline-flex items-center gap-1.5"><Check className="size-3.5 text-emerald-600" aria-hidden /> No sign-up</span>
-              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-blue-600" aria-hidden /> Local processing</span>
-              <span className="inline-flex items-center gap-1.5"><Zap className="size-3.5 text-amber-500" aria-hidden /> Ready in seconds</span>
-            </div>
+      {/* Cinematic hero keeps the animated backdrop behind stable, readable content. */}
+      <section className="relative grid min-h-[88svh] place-items-center overflow-hidden border-b border-white/10 bg-[#031334] px-5 pb-12 pt-24 text-white sm:px-8 sm:pb-14 sm:pt-28">
+        <div className="hero-art-motion pointer-events-none absolute -inset-[4%] bg-cover bg-center" aria-hidden />
+        <div className="hero-light-sweep pointer-events-none absolute inset-0" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(1,10,36,0.86)_0%,rgba(2,16,53,0.62)_42%,rgba(3,17,51,0.24)_72%)] backdrop-blur-[1px]" aria-hidden />
+        <div className="relative z-10 mx-auto w-full max-w-6xl text-center">
+          <h1 className="font-display text-5xl font-black uppercase leading-[1.02] tracking-[-0.035em] text-white drop-shadow-[0_8px_26px_rgba(1,8,35,0.65)] sm:text-7xl lg:text-[6.2rem]">
+            Make every PDF task
+            <span className="mt-4 block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-transparent">feel effortless</span>
+          </h1>
+          <p className="mx-auto mt-7 max-w-2xl text-base font-semibold leading-7 text-white drop-shadow-[0_3px_14px_rgba(1,8,35,0.85)] sm:text-xl">
+            Merge, split, and compress documents instantly in your browser. Your files stay on your device, with no account required.
+          </p>
+          <a href="#try-free-tools" className="mx-auto mt-9 inline-flex min-h-16 items-center justify-center gap-3 rounded-2xl border border-white/45 bg-white/14 px-11 text-xl font-black text-white shadow-[0_16px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-cyan-200/80 hover:bg-white/24 hover:shadow-[0_0_44px_rgba(34,211,238,0.42)]">
+            Try tools free <ArrowRight className="size-5" aria-hidden />
+          </a>
+          <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold uppercase tracking-[0.08em] text-white/85">
+            <span className="inline-flex items-center gap-1.5"><Check className="size-4 text-emerald-300" aria-hidden />No sign-up</span>
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="size-4 text-cyan-200" aria-hidden />Local processing</span>
           </div>
-          <WorkflowPreview />
         </div>
       </section>
 
@@ -84,7 +70,7 @@ export function LandingPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Start right now</p>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-[-0.03em]">Useful tools, no login wall.</h2>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-[-0.03em]">All Useful Tools</h2>
               <p className="mt-2 text-sm text-muted">Choose a tool, add your PDF, and process it privately on your device.</p>
             </div>
             <span className="inline-flex w-fit items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold text-emerald-700">
@@ -146,20 +132,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing preview: concise plan comparison with a link to full details. */}
-      <section className="bg-white px-5 py-20 sm:px-8">
-        <div className="mx-auto max-w-5xl text-center">
-          <h2 className="font-display text-3xl font-medium tracking-[-0.025em]">Simple, Transparent Pricing.</h2>
-          <p className="mt-2 text-sm text-muted">Choose the plan that fits your volume.</p>
-          <div className="mt-10 grid gap-4 text-left md:grid-cols-3">
-            <PlanCard title="Starter" price="₹0" features={['5 tasks per day', '50 MB max per file', 'Web-only access']} />
-            <PlanCard featured title="Professional" price="₹999" features={['Unlimited tasks', '2 GB max file size', 'Desktop & mobile apps', 'AI summarization']} />
-            <PlanCard title="Enterprise" price="Custom" features={['SSO & team management', 'Custom API integration', '99.9% SLA guarantee']} />
-          </div>
-          <Link to="/pricing" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-primary">Compare all plan features <ArrowRight className="size-4" /></Link>
-        </div>
-      </section>
-
       {/* FAQ: expandable answers for common trust and billing questions. */}
       <section id="faq" className="scroll-mt-24 bg-[#f1f2f3] px-5 py-20 sm:px-8">
         <div className="mx-auto max-w-3xl">
@@ -175,15 +147,16 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Final call to action: optional account creation and enterprise contact. */}
-      <section id="enterprise" className="bg-white px-5 py-18 sm:px-8">
-        <div className="mx-auto max-w-6xl rounded-2xl bg-primary px-6 py-12 text-center text-white elevated-shadow sm:px-12">
-          <BadgeCheck className="mx-auto size-8 text-[#d8e2ff]" aria-hidden />
-          <h2 className="mt-5 font-display text-3xl font-medium tracking-[-0.025em] sm:text-4xl">Ready to master your workflow?</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/72">Join professionals who trust PDF Toolkit for daily document needs.</p>
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link to="/login" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-white px-5 text-sm font-medium text-primary">Create Free Account</Link>
-            <Link to="/pricing" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/30 px-5 text-sm font-medium">View Plans</Link>
+      {/* Access limits remain the final landing section and match runtime validation. */}
+      <section id="access-plans" className="scroll-mt-20 bg-[#eef0f2] px-5 py-20 sm:px-8">
+        <div className="mx-auto max-w-6xl text-center">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">Free access limits</p>
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-[-0.025em]">Choose how you use PdfDocs</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted">No paid subscription is available yet. Signing in simply unlocks a higher daily allowance and one larger-file task each day.</p>
+          <div className="mt-10 grid gap-4 text-left md:grid-cols-3">
+            <PlanCard actionLabel="Use free tools" compactPrice title="Guest access" price="Free" priceSuffix="" to="/#try-free-tools" features={['5 tasks per day', '100 MB total processing per day', 'Each PDF must be smaller than 50 MB', 'Merge batches up to 100 MB']} />
+            <PlanCard actionLabel="Login for higher limits" compactPrice featured badge="Higher limits" title="SIGN IN" price="Free" priceSuffix="" to="/login" features={['10 tasks per day', '200 MB total processing per day', 'One file up to 100 MB once per day', 'Merge batches up to 100 MB']} />
+            <PlanCard actionLabel="Coming soon" disabled featured badge="Future pricing" title="Professional" price="₹999" features={['Planned expanded workflows', 'Priority processing options', 'Final benefits announced before launch', 'No payment collected today']} />
           </div>
         </div>
       </section>

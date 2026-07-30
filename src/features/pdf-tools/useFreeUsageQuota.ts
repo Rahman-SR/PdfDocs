@@ -1,50 +1,62 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 import { AuthContext } from '../auth/auth-context'
 import {
-  FREE_DAILY_LIMIT_MESSAGE,
+  getFileSizeLimit,
   getFreeFileLimitMessage,
+  getTaskLimitMessage,
+  getUsagePlan,
   hasPaidPlan,
+  isLargeAccountFile,
   loadFreeUsage,
   recordFreeTask,
 } from '../../lib/free-usage'
 
-// One hook keeps plan detection, daily usage, and file validation consistent.
+// One hook keeps identity-aware daily tasks, bytes, and file validation consistent.
 export function useFreeUsageQuota() {
   const auth = useContext(AuthContext)
   const isFreePlan = !hasPaidPlan(auth?.user)
-  const [usage, setUsage] = useState(loadFreeUsage)
+  const isSignedIn = auth?.status === 'authenticated'
+  const plan = useMemo(() => getUsagePlan(isSignedIn, auth?.user?.id), [auth?.user?.id, isSignedIn])
+  const fileSizeLimit = getFileSizeLimit(isSignedIn)
+  const [usage, setUsage] = useState(() => loadFreeUsage(new Date(), plan))
 
   useEffect(() => {
-    const refreshUsage = () => setUsage(loadFreeUsage())
+    const refreshUsage = () => setUsage(loadFreeUsage(new Date(), plan))
+    refreshUsage()
     window.addEventListener('storage', refreshUsage)
     window.addEventListener('focus', refreshUsage)
     return () => {
       window.removeEventListener('storage', refreshUsage)
       window.removeEventListener('focus', refreshUsage)
     }
-  }, [])
+  }, [plan])
 
-  const canStartTask = useCallback(() => {
-    if (!isFreePlan) return true
-    const current = loadFreeUsage()
+  const taskLimitMessage = useCallback((inputBytes: number) => {
+    if (!isFreePlan) return null
+    const current = loadFreeUsage(new Date(), plan)
     setUsage(current)
-    return current.remainingTasks > 0
-  }, [isFreePlan])
+    return getTaskLimitMessage(inputBytes, plan, current)
+  }, [isFreePlan, plan])
 
-  const completeTask = useCallback(() => {
-    if (isFreePlan) setUsage(recordFreeTask())
-  }, [isFreePlan])
+  const completeTask = useCallback((inputBytes: number, usedLargeFile = false) => {
+    if (isFreePlan) setUsage(recordFreeTask(new Date(), plan, inputBytes, usedLargeFile))
+  }, [isFreePlan, plan])
 
-  const validateFile = useCallback((file: File) => (
-    isFreePlan ? getFreeFileLimitMessage(file) : null
-  ), [isFreePlan])
+  const validateFile = useCallback((file: File) => {
+    if (!isFreePlan) return null
+    const current = loadFreeUsage(new Date(), plan)
+    return getFreeFileLimitMessage(file, plan, current)
+  }, [isFreePlan, plan])
 
   return {
-    canStartTask,
     completeTask,
-    dailyLimitMessage: FREE_DAILY_LIMIT_MESSAGE,
+    fileSizeLimit,
     isFreePlan,
+    isLargeFile: isLargeAccountFile,
+    isSignedIn,
+    plan,
+    taskLimitMessage,
     usage,
     validateFile,
   }

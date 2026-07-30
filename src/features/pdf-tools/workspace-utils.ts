@@ -1,4 +1,5 @@
 import { loadPreferences } from '../../lib/preferences'
+import { getPdfPageCount, readFileBytes } from '../../lib/pdf-processing'
 
 // File validation and display helpers shared by every PDF workspace.
 export function isPdfFile(file: File) {
@@ -14,6 +15,17 @@ export function formatFileSize(bytes: number) {
 export function createPdfObjectUrl(bytes: Uint8Array) {
   const data = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer
   return URL.createObjectURL(new Blob([data], { type: 'application/pdf' }))
+}
+
+// Shared source preparation keeps Split and Compress preview behavior identical.
+export async function preparePdfPreview(file: File, previousUrl: string | null) {
+  const bytes = await readFileBytes(file)
+  const pageCount = await getPdfPageCount(bytes)
+  const url = createPdfObjectUrl(bytes)
+
+  if (previousUrl) URL.revokeObjectURL(previousUrl)
+
+  return { bytes, pageCount, url }
 }
 
 export function getErrorMessage(error: unknown) {

@@ -1,39 +1,41 @@
-# PDF Toolkit
+# PdfDocs
 
-PDF Toolkit is a privacy-focused React application for merging, splitting, previewing, and compressing PDF files directly in the browser. The core PDF workflows run on the user's device and do not require an account.
+PdfDocs is a privacy-focused React application for merging, splitting, previewing, and compressing PDF files directly in the browser. All currently available PDF tools work without an account and process document contents on the user's device.
 
 Repository: [Rahman-SR/Pdf-Toolkit](https://github.com/Rahman-SR/Pdf-Toolkit)
 
-## Current features
+## Available features
 
 ### PDF tools
 
-- **Merge PDF** — add multiple PDFs, preview individual files, preserve queue order, create one merged document, and download it explicitly.
-- **Split PDF** — preview a PDF, select individual pages or page ranges, and export one combined selection or separate PDF files.
-- **Compress PDF** — preview the source, choose a compression level, remove metadata, optionally optimize page images, compare the exact result size, and download the optimized file.
-- **Local processing** — common PDF operations use `pdf-lib`, `pdfjs-dist`, canvas, and browser object URLs without uploading documents to an application server.
+- **Merge PDF** — add several PDFs, preview each file, reorder the queue, create one merged document, and download it only after processing finishes.
+- **Split PDF** — preview a PDF, select individual pages or ranges, and create one combined selection or separate PDF downloads.
+- **Compress PDF** — preview the source, choose a compression level, remove metadata, optionally optimize page images, compare the exact output size, and download the result explicitly.
+- **Local processing** — the implemented workflows use `pdf-lib`, `pdfjs-dist`, Canvas, and browser object URLs without intentionally uploading PDF contents to an application server.
 
-### Application experience
+### Application
 
-- Public landing page with Merge, Split, and Compress available without login.
-- Responsive authenticated dashboard and tools directory.
-- Email/password sign-up and sign-in through Supabase Auth.
-- Google OAuth entry point and callback handling.
-- Password recovery and password update flows.
+- Public landing page and all implemented PDF tools work without login.
+- Email-only sign-up and sign-in with Supabase Auth.
+- Email confirmation, password recovery, and authenticated password changes.
 - Protected dashboard, tools, settings, and profile routes.
-- Editable profile metadata and persistent appearance, language, notification, and privacy preferences.
-- Responsive desktop sidebar and mobile navigation.
-- Light and dark appearance settings.
+- Editable profile metadata and persistent local preferences.
+- Appearance, language, notification, and privacy settings.
+- Responsive public navigation, workspace sidebar, and mobile navigation.
+- Light and dark appearance modes.
 
-### Free-plan limits
+## Usage limits
 
-Anonymous visitors and signed-in users without paid-plan metadata receive:
+PdfDocs currently applies browser-side daily limits:
 
-- 5 successful PDF tasks per local calendar day.
-- 50 MB maximum per file.
-- Web-only access.
+| Access | Tasks per day | Processing per day | Per-file rule | Merge batch |
+| --- | ---: | ---: | --- | ---: |
+| Guest | 5 | 100 MB | Every PDF must be smaller than 50 MB | 100 MB |
+| Signed in | 10 | 200 MB | One PDF up to 100 MB once per day; other files must be smaller than 50 MB | 100 MB |
 
-The current quota is stored in browser `localStorage`, so it is a client-side product limit for this web build. Production-grade enforcement across browsers or devices requires a server-side usage table or API, authenticated user ownership, and database policies.
+Oversized files display a clear validation message before processing starts. Usage counters are stored in browser `localStorage`, so these limits are product guidance rather than a security or billing boundary. Authoritative cross-device enforcement will require a trusted server-side usage service and database policies.
+
+Paid subscriptions are not available yet. Any professional-plan pricing shown in the interface is a future preview and does not collect payment.
 
 ## Technology
 
@@ -43,18 +45,18 @@ The current quota is stored in browser `localStorage`, so it is a client-side pr
 - React Router 7
 - Supabase Auth
 - `pdf-lib` for PDF document operations
-- `pdfjs-dist` for PDF rendering and image-based compression
+- `pdfjs-dist` for previews and image-based compression
 - Lucide React icons
 - Vitest and Testing Library
 
-## Run locally
+## Local development
 
 ### Requirements
 
 - Node.js 20.19+, 22.12+, or a newer supported release
 - npm
 
-### Installation
+### Setup
 
 ```bash
 git clone https://github.com/Rahman-SR/Pdf-Toolkit.git
@@ -62,7 +64,7 @@ cd Pdf-Toolkit
 npm install
 ```
 
-Create a local environment file:
+Create the local environment file:
 
 ```powershell
 Copy-Item .env.example .env.local
@@ -74,7 +76,7 @@ On macOS or Linux:
 cp .env.example .env.local
 ```
 
-Start Vite:
+Start the development server:
 
 ```bash
 npm run dev -- --host 127.0.0.1 --port 5173
@@ -82,11 +84,17 @@ npm run dev -- --host 127.0.0.1 --port 5173
 
 Open [http://127.0.0.1:5173](http://127.0.0.1:5173).
 
-The public PDF tools work without Supabase credentials. Authentication pages display a setup notice until Supabase is configured.
+On Windows systems where PowerShell blocks `npm.ps1`, use `npm.cmd`:
+
+```powershell
+npm.cmd run dev -- --host 127.0.0.1 --port 5173
+```
+
+The public PDF tools work without Supabase credentials. Authentication pages show a setup notice until Supabase is configured.
 
 ## Environment variables
 
-Copy the safe placeholders from `.env.example` and add values only to `.env.local`:
+Copy `.env.example` to `.env.local` and provide only browser-safe values:
 
 ```dotenv
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co
@@ -96,57 +104,60 @@ VITE_SITE_URL=http://127.0.0.1:5173
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_SUPABASE_URL` | Supabase project URL from the project Connect dialog. |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-safe Supabase publishable key. |
-| `VITE_SITE_URL` | Application origin used to build safe auth callback URLs. |
+| `VITE_SUPABASE_URL` | Supabase project URL from the project Connect dialog |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-safe Supabase publishable key |
+| `VITE_SITE_URL` | Application origin used to create authentication callback URLs |
 
-Only use a Supabase publishable key in frontend `VITE_` variables. Never add `sb_secret_`, `service_role`, private keys, or other server credentials to this repository.
+Never place `sb_secret_`, `service_role`, private keys, database passwords, or other server credentials in a `VITE_` variable or commit them to this repository. Restart Vite after changing `.env.local`.
 
-After changing `.env.local`, restart Vite because environment variables are read at startup. See [Supabase Auth setup](docs/SUPABASE_AUTH_SETUP.md) for callback URLs, email authentication, Google OAuth, and production security notes.
+See [Supabase Auth setup](docs/SUPABASE_AUTH_SETUP.md) for dashboard configuration, redirect URLs, password security, SMTP, and production notes.
 
 ## Routes
 
-### Public
+### Public routes
 
 | Route | Purpose |
 | --- | --- |
 | `/` | Landing page and public tool entry points |
-| `/pricing` | Plan comparison |
+| `/pricing` | Current access limits and future plan preview |
 | `/free-tools/merge` | Public Merge workspace |
 | `/free-tools/split` | Public Split workspace |
 | `/free-tools/compress` | Public Compress workspace |
-| `/login` | Sign in and sign up |
-| `/forgot-password` | Request a recovery link |
-| `/update-password` | Set a new password from a recovery session |
-| `/auth/callback` | Supabase OAuth callback |
+| `/login` | Email sign-in and sign-up |
+| `/forgot-password` | Request a password recovery link |
+| `/update-password` | Set a password from a recovery session |
+| `/auth/callback` | Supabase email confirmation callback |
 
-### Authenticated workspace
+### Signed-in workspace routes
 
 | Route | Purpose |
 | --- | --- |
 | `/dashboard` | Workspace overview |
-| `/tools` | Tools directory |
-| `/tools/merge` | Authenticated Merge workspace |
-| `/tools/split` | Authenticated Split workspace |
-| `/tools/compress` | Authenticated Compress workspace |
+| `/tools` | Available and roadmap tools |
+| `/tools/merge` | Signed-in Merge workspace |
+| `/tools/split` | Signed-in Split workspace |
+| `/tools/compress` | Signed-in Compress workspace |
 | `/settings` | Appearance, language, notification, privacy, and account settings |
 | `/profile` | Profile and account metadata |
+| `/change-password` | Verify the current password and choose a new one |
 
 ## Project structure
 
 ```text
+public/
+  pdfdocs-hero-user-v1.png    Landing-page hero artwork
 src/
-  app/                    Router, protected routes, and interaction tests
-  components/             Shared public and workspace layout components
-  config/                 Shared PDF tool catalog
+  app/                        Router, protected routes, and route tests
+  components/                 Shared public and workspace layout components
+  config/                     Shared PDF tool catalog and visual metadata
   features/
-    auth/                  Supabase session provider and auth context
-    pdf-tools/             Merge, Split, Compress, preview, and quota UI
-  lib/                     PDF processing, compression, preferences, quota, and Supabase client
-  pages/                   Route-level pages
-  test/                    Test setup and generated PDF fixtures
+    auth/                     Supabase session provider and auth context
+    pdf-tools/                Merge, Split, Compress, preview, and quota UI
+  lib/                        PDF processing, preferences, quota, auth, and Supabase helpers
+  pages/                      Route-level pages
+  test/                       Test setup and generated PDF fixtures
 docs/
-  SUPABASE_AUTH_SETUP.md   Supabase dashboard and redirect configuration
+  SUPABASE_AUTH_SETUP.md      Supabase dashboard and redirect configuration
 ```
 
 ## Quality checks
@@ -157,34 +168,38 @@ npm test
 npm run build
 ```
 
-`npm test` covers route protection, authentication interactions, settings, profile updates, free-plan limits, PDF merging, page extraction, split downloads, compression behavior, and download confirmation.
+The test suite covers authentication and route protection, password flows, settings and profile changes, free-access limits, PDF merging, page extraction, split downloads, compression behavior, and explicit download confirmation.
 
 ## PDF processing notes
 
-- Files are held in browser memory only for the active workflow.
-- Object URLs used for previews are revoked when previews or workspaces close.
+- Selected files remain in browser memory for the active workflow.
+- Temporary preview object URLs are revoked when previews change or workspaces close.
 - Merge and Compress create a result before showing a separate Download button.
-- Split downloads the selected output after processing.
-- Image optimization rasterizes PDF pages to JPEG. It can reduce image-heavy files, but searchable text, selectable text, forms, links, annotations, and vector detail may be flattened in the optimized output.
-- Compression always compares the original, structural optimization, and optional image optimization candidates, then preserves the smallest result so a compressed file is not intentionally larger than its source.
+- Split processes and downloads the selected output after confirmation.
+- Image optimization rasterizes pages to JPEG. It may flatten searchable text, forms, links, annotations, and vector detail.
+- Compression compares available candidates and keeps the smallest result so it does not intentionally return a file larger than the original.
 
 ## Security and privacy
 
-- `.env.local`, build output, dependencies, logs, and coverage are ignored by Git.
-- The repository must contain only the Supabase publishable key placeholder, never a real secret key.
-- The React route guard is a user-experience boundary, not database authorization.
-- Any future user-data or usage tables must enable Row Level Security and enforce ownership using the authenticated user's ID.
-- Client-side Free-plan limits are not a security boundary; authoritative billing enforcement belongs on a trusted backend.
+- `.env.local`, dependencies, build output, coverage, logs, and editor files are ignored by Git.
+- Only a Supabase publishable key belongs in frontend configuration.
+- Passwords are sent directly to Supabase Auth and are not stored by PdfDocs.
+- Google and other social providers are not used by the application.
+- Recovery password forms require a Supabase `PASSWORD_RECOVERY` session.
+- Authenticated password changes verify the current password and revoke other refresh-token sessions.
+- React route protection is a user-experience boundary, not database authorization.
+- Any future database tables must enable Row Level Security and enforce ownership with the authenticated user ID.
 
 ## Deployment
 
-The included `vercel.json` rewrites application routes to `index.html` for client-side routing. For a production deployment:
+`vercel.json` rewrites application routes to `index.html` so the Vite SPA can handle direct route loads.
 
-1. Add the three `VITE_` environment variables to the hosting provider.
+1. Add `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and `VITE_SITE_URL` to the hosting provider.
 2. Set `VITE_SITE_URL` to the deployed HTTPS origin.
 3. Add the production `/auth/callback` and `/update-password` URLs to Supabase Authentication URL Configuration.
-4. Run `npm run build` and deploy the generated `dist` directory.
+4. Run `npm run build`.
+5. Deploy the generated `dist` directory.
 
 ## Roadmap
 
-The interface currently labels Rotate, Reorder, Delete Pages, Extract, Watermark, Page Numbers, and JPG to PDF as coming soon. Those cards are UI placeholders and are not yet processing tools.
+Rotate, Reorder, Delete Pages, Extract, Watermark, Page Numbers, and JPG to PDF are marked as coming soon. Their cards are navigation previews only and do not currently process files.

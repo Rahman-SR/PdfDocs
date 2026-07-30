@@ -14,6 +14,7 @@ import {
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 
 import { downloadPdf, getPdfPageCount, mergePdfDocuments, readFileBytes } from '../../lib/pdf-processing'
+import { MAX_UPLOAD_BATCH_BYTES, MAX_UPLOAD_BATCH_LABEL } from '../../lib/free-usage'
 import { FreeUsageNotice, PdfPreviewFrame } from './WorkspaceUi'
 import { useFreeUsageQuota } from './useFreeUsageQuota'
 import { createPdfObjectUrl, formatFileSize, getErrorMessage, isPdfFile, notifyCompletion } from './workspace-utils'
@@ -46,8 +47,25 @@ export function MergeWorkspace() {
   // File selection accepts only PDFs and appends them to the current queue.
   const appendFiles = (incomingFiles: File[]) => {
     const pdfFiles = incomingFiles.filter(isPdfFile)
-    const acceptedFiles = pdfFiles.filter((file) => !quota.validateFile(file))
+    const sizeEligibleFiles = pdfFiles.filter((file) => !quota.validateFile(file))
     const rejectedFile = pdfFiles.find((file) => quota.validateFile(file))
+    let nextBatchSize = files.reduce((total, file) => total + file.size, 0)
+    let largeFileCount = files.filter(quota.isLargeFile).length
+    const acceptedFiles: File[] = []
+    let batchRejected = false
+    let largeFileRejected = false
+
+    for (const file of sizeEligibleFiles) {
+      if (nextBatchSize + file.size > MAX_UPLOAD_BATCH_BYTES) {
+        batchRejected = true
+      } else if (quota.isSignedIn && quota.isLargeFile(file) && largeFileCount >= 1) {
+        largeFileRejected = true
+      } else {
+        acceptedFiles.push(file)
+        nextBatchSize += file.size
+        if (quota.isLargeFile(file)) largeFileCount += 1
+      }
+    }
 
     if (acceptedFiles.length) {
       setFiles((current) => [...current, ...acceptedFiles])
@@ -57,6 +75,10 @@ export function MergeWorkspace() {
     setNotice(
       rejectedFile
         ? quota.validateFile(rejectedFile)
+        : largeFileRejected
+          ? 'Only one PDF of 50 MB or more can use the signed-in large-file allowance each day.'
+        : batchRejected
+          ? `The merge queue cannot exceed ${MAX_UPLOAD_BATCH_LABEL}. Remove a file before adding more.`
         : pdfFiles.length
           ? null
           : 'Choose one or more PDF files to continue.',
@@ -120,8 +142,10 @@ export function MergeWorkspace() {
       return
     }
 
-    if (!quota.canStartTask()) {
-      setNotice(quota.dailyLimitMessage)
+    const inputBytes = files.reduce((total, file) => total + file.size, 0)
+    const limitMessage = quota.taskLimitMessage(inputBytes)
+    if (limitMessage) {
+      setNotice(limitMessage)
       return
     }
 
@@ -134,7 +158,7 @@ export function MergeWorkspace() {
       const merged = await mergePdfDocuments(inputs)
       const pageCount = await getPdfPageCount(merged)
       setMergedResult({ bytes: merged, pageCount })
-      quota.completeTask()
+      quota.completeTask(inputBytes, files.some(quota.isLargeFile))
       notifyCompletion(`Merged ${files.length} PDFs into ${pageCount} pages. Ready to download.`, setNotice)
     } catch (error) {
       setNotice(`Could not merge these PDFs. ${getErrorMessage(error)}`)
@@ -163,7 +187,7 @@ export function MergeWorkspace() {
             <h1 className="font-display text-2xl font-medium">Merge PDF Documents</h1>
             <span className="rounded-full bg-[#6cf8bb] px-3 py-1 text-xs font-medium text-[#006c49]">Secure local</span>
           </div>
-          <div className="mt-4"><FreeUsageNotice isFreePlan={quota.isFreePlan} remainingTasks={quota.usage.remainingTasks} /></div>
+          <div className="mt-4"><FreeUsageNotice isFreePlan={quota.isFreePlan} isSignedIn={quota.isSignedIn} largeFileUses={quota.usage.largeFileUses} plan={quota.plan} remainingTasks={quota.usage.remainingTasks} showBatchLimit /></div>
 
           <button
             type="button"

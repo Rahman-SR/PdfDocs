@@ -1,16 +1,17 @@
-import { FileText, Info, LoaderCircle, LockKeyhole, Scissors } from 'lucide-react'
+import { FileText, Info, LockKeyhole, Scissors } from 'lucide-react'
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 
-import { downloadPdf, extractPdfPages, getPdfPageCount, pagesInRange, readFileBytes } from '../../lib/pdf-processing'
-import { FreeUsageNotice, NumberField, PdfPreviewFrame, PdfUploadEmptyState } from './WorkspaceUi'
+import { downloadPdf, extractPdfPages, pagesInRange } from '../../lib/pdf-processing'
+import { FreeUsageNotice, NumberField, PdfPreviewContent } from './WorkspaceUi'
 import { useFreeUsageQuota } from './useFreeUsageQuota'
-import { createPdfObjectUrl, getErrorMessage, isPdfFile, notifyCompletion } from './workspace-utils'
+import { getErrorMessage, isPdfFile, notifyCompletion, preparePdfPreview } from './workspace-utils'
 
 // Split workspace source and page-selection models.
 type SplitSource = {
   bytes: Uint8Array
   name: string
   pageCount: number
+  sizeBytes: number
   url: string
 }
 
@@ -61,18 +62,14 @@ export function SplitWorkspace() {
     setNotice('Checking your PDF...')
 
     try {
-      const bytes = await readFileBytes(file)
-      const pageCount = await getPdfPageCount(bytes)
-      const url = createPdfObjectUrl(bytes)
-
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
-      previewUrlRef.current = url
-      setSource({ bytes, name: file.name, pageCount, url })
+      const preview = await preparePdfPreview(file, previewUrlRef.current)
+      previewUrlRef.current = preview.url
+      setSource({ ...preview, name: file.name, sizeBytes: file.size })
       setFromPage(1)
-      setToPage(Math.min(5, pageCount))
+      setToPage(Math.min(5, preview.pageCount))
       setRanges([])
       setSelectedPages([1])
-      setNotice(`Loaded ${file.name} with ${pageCount} page${pageCount === 1 ? '' : 's'}.`)
+      setNotice(`Loaded ${file.name} with ${preview.pageCount} page${preview.pageCount === 1 ? '' : 's'}.`)
     } catch (error) {
       setNotice(`Could not open this PDF. ${getErrorMessage(error)}`)
     } finally {
@@ -116,8 +113,9 @@ export function SplitWorkspace() {
       return
     }
 
-    if (!quota.canStartTask()) {
-      setNotice(quota.dailyLimitMessage)
+    const limitMessage = quota.taskLimitMessage(source.sizeBytes)
+    if (limitMessage) {
+      setNotice(limitMessage)
       return
     }
 
@@ -131,12 +129,12 @@ export function SplitWorkspace() {
         const uniquePages = [...new Set(groups.flatMap((group) => group.pages))]
         const output = await extractPdfPages(source.bytes, uniquePages)
         downloadPdf(output, `${baseName}-selection.pdf`)
-        quota.completeTask()
+        quota.completeTask(source.sizeBytes, quota.isLargeFile({ size: source.sizeBytes }))
         notifyCompletion(`Created one PDF with ${uniquePages.length} page${uniquePages.length === 1 ? '' : 's'}. Download started.`, setNotice)
       } else {
         const outputs = await Promise.all(groups.map((group) => extractPdfPages(source.bytes, group.pages)))
         outputs.forEach((output, index) => downloadPdf(output, `${baseName}-${groups[index]?.label ?? index + 1}.pdf`))
-        quota.completeTask()
+        quota.completeTask(source.sizeBytes, quota.isLargeFile({ size: source.sizeBytes }))
         notifyCompletion(`Created ${outputs.length} separate PDF${outputs.length === 1 ? '' : 's'}. Downloads started.`, setNotice)
       }
     } catch (error) {
@@ -167,19 +165,18 @@ export function SplitWorkspace() {
             </div>
           )}
         </div>
-        <div className="mt-4"><FreeUsageNotice isFreePlan={quota.isFreePlan} remainingTasks={quota.usage.remainingTasks} /></div>
+        <div className="mt-4"><FreeUsageNotice isFreePlan={quota.isFreePlan} isSignedIn={quota.isSignedIn} largeFileUses={quota.usage.largeFileUses} plan={quota.plan} remainingTasks={quota.usage.remainingTasks} /></div>
         <input ref={inputRef} aria-label="Choose PDF to split" className="sr-only" type="file" accept="application/pdf" onChange={chooseSource} />
 
         <div className="mt-6 flex justify-center min-[1180px]:justify-start">
-          {previewLoading ? (
-            <div className="grid aspect-square w-full max-w-[500px] place-items-center rounded-xl border border-line bg-[#e9edf2] text-center text-muted">
-              <div><LoaderCircle className="mx-auto size-8 animate-spin text-primary" aria-hidden /><p className="mt-3 text-sm">Preparing PDF preview...</p></div>
-            </div>
-          ) : source ? (
-            <PdfPreviewFrame title={`Split preview: ${source.name}`} url={source.url} />
-          ) : (
-            <PdfUploadEmptyState title="Select a PDF to split" description="Choose a document, then select page ranges or individual pages." buttonLabel="Choose PDF" onChoose={() => inputRef.current?.click()} />
-          )}
+          <PdfPreviewContent
+            emptyDescription="Choose a document, then select page ranges or individual pages."
+            emptyTitle="Select a PDF to split"
+            loading={previewLoading}
+            onChoose={() => inputRef.current?.click()}
+            previewTitle={`Split preview: ${source?.name ?? 'PDF'}`}
+            source={source}
+          />
         </div>
 
         {source && (

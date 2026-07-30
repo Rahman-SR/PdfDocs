@@ -1,6 +1,7 @@
 import type { User } from '@supabase/supabase-js'
 import {
   useEffect,
+  useCallback,
   useMemo,
   useState,
   type ReactNode,
@@ -16,6 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
   const [user, setUser] = useState<User | null>(null)
   const [isRecovery, setIsRecovery] = useState(false)
+  const finishRecovery = useCallback(() => setIsRecovery(false), [])
 
   useEffect(() => {
     const client = supabase
@@ -52,7 +54,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      setIsRecovery(event === 'PASSWORD_RECOVERY')
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecovery(true)
+      } else if (event === 'SIGNED_OUT') {
+        setIsRecovery(false)
+      }
       setUser(session?.user ?? null)
       setStatus(session?.user ? 'authenticated' : 'anonymous')
     })
@@ -64,8 +70,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ isRecovery, status, user }),
-    [isRecovery, status, user],
+    () => ({ finishRecovery, isRecovery, status, user }),
+    [finishRecovery, isRecovery, status, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

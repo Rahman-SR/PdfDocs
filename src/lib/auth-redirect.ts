@@ -1,6 +1,6 @@
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, '')
 
-export function getSiteUrl(): string {
+function getSiteUrl(): string {
   const configuredUrl = import.meta.env.VITE_SITE_URL?.trim()
 
   if (configuredUrl) {

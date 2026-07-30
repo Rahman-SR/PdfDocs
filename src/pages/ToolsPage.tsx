@@ -1,18 +1,8 @@
-import {
-  ArrowRight,
-  FileImage,
-  FileOutput,
-  Hash,
-  RotateCw,
-  Stamp,
-  Trash2,
-  ListOrdered,
-  type LucideIcon,
-} from 'lucide-react'
+import { ArrowRight, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { CORE_PDF_TOOLS } from '../config/pdf-tools'
+import { CORE_PDF_TOOLS, ROADMAP_PDF_TOOLS } from '../config/pdf-tools'
 
 // The implemented tools reuse the shared catalog; this file only defines roadmap items.
 const tools = [
@@ -25,13 +15,15 @@ const tools = [
     title: workspaceTitle,
     to: workspacePath,
   })),
-  { title: 'Rotate', text: 'Rotate single pages or an entire document to the right orientation.', icon: RotateCw, to: '/tools', iconClass: 'bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-violet-200/70', accentClass: 'text-violet-700', surfaceClass: 'bg-gradient-to-br from-violet-100/90 via-violet-50/55 to-white hover:border-violet-300 hover:shadow-violet-200/60' },
-  { title: 'Reorder', text: 'Drag and drop pages to rearrange the order of your document.', icon: ListOrdered, to: '/tools', iconClass: 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-200/70', accentClass: 'text-cyan-700', surfaceClass: 'bg-gradient-to-br from-cyan-100/90 via-cyan-50/55 to-white hover:border-cyan-300 hover:shadow-cyan-200/60' },
-  { title: 'Delete', text: 'Remove unwanted pages from your PDF file safely.', icon: Trash2, to: '/tools', iconClass: 'bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-lg shadow-rose-200/70', accentClass: 'text-rose-700', surfaceClass: 'bg-gradient-to-br from-rose-100/90 via-rose-50/55 to-white hover:border-rose-300 hover:shadow-rose-200/60' },
-  { title: 'Extract', text: 'Pull specific content or pages into a new PDF document.', icon: FileOutput, to: '/tools', iconClass: 'bg-gradient-to-br from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-200/70', accentClass: 'text-teal-700', surfaceClass: 'bg-gradient-to-br from-teal-100/90 via-teal-50/55 to-white hover:border-teal-300 hover:shadow-teal-200/60' },
-  { title: 'Watermark', text: 'Add text or image watermarks for copyright protection.', icon: Stamp, to: '/tools', iconClass: 'bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white shadow-lg shadow-fuchsia-200/70', accentClass: 'text-fuchsia-700', surfaceClass: 'bg-gradient-to-br from-fuchsia-100/90 via-fuchsia-50/55 to-white hover:border-fuchsia-300 hover:shadow-fuchsia-200/60' },
-  { title: 'Page Numbers', text: 'Add flexible page numbering to your document.', icon: Hash, to: '/tools', iconClass: 'bg-gradient-to-br from-amber-400 to-orange-600 text-white shadow-lg shadow-amber-200/70', accentClass: 'text-amber-700', surfaceClass: 'bg-gradient-to-br from-amber-100/90 via-amber-50/55 to-white hover:border-amber-300 hover:shadow-amber-200/60' },
-  { title: 'JPG to PDF', text: 'Turn images into one polished, shareable PDF.', icon: FileImage, to: '/tools', iconClass: 'bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-lg shadow-pink-200/70', accentClass: 'text-pink-700', surfaceClass: 'bg-gradient-to-br from-pink-100/90 via-pink-50/55 to-white hover:border-pink-300 hover:shadow-pink-200/60' },
+  ...ROADMAP_PDF_TOOLS.map(({ accentClass, description, icon, iconClass, surfaceClass, title }) => ({
+    accentClass,
+    icon,
+    iconClass,
+    surfaceClass,
+    text: description,
+    title,
+    to: '/tools',
+  })),
 ]
 
 export function ToolsPage() {

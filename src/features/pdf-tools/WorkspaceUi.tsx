@@ -1,16 +1,32 @@
-import { FileUp, Gauge, LockKeyhole } from 'lucide-react'
+import { FileUp, Gauge, LoaderCircle, LockKeyhole } from 'lucide-react'
 
-import { FREE_DAILY_TASK_LIMIT, FREE_MAX_FILE_SIZE_LABEL } from '../../lib/free-usage'
+import { FREE_MAX_FILE_SIZE_LABEL, MAX_UPLOAD_BATCH_LABEL, SIGNED_IN_LARGE_FILE_LABEL } from '../../lib/free-usage'
 
 // Compact entitlement summary shown in every public PDF workspace.
-export function FreeUsageNotice({ isFreePlan, remainingTasks }: { isFreePlan: boolean; remainingTasks: number }) {
+export function FreeUsageNotice({
+  isFreePlan,
+  isSignedIn,
+  largeFileUses,
+  plan,
+  remainingTasks,
+  showBatchLimit = false,
+}: {
+  isFreePlan: boolean
+  isSignedIn: boolean
+  largeFileUses: number
+  plan: { dailyBytesLabel: string; taskLimit: number }
+  remainingTasks: number
+  showBatchLimit?: boolean
+}) {
   if (!isFreePlan) return null
 
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-primary" aria-live="polite">
-      <span className="inline-flex items-center gap-1.5 font-medium"><Gauge className="size-4" aria-hidden />Free plan</span>
-      <span>{remainingTasks} of {FREE_DAILY_TASK_LIMIT} tasks left today</span>
-      <span>{FREE_MAX_FILE_SIZE_LABEL} max per file</span>
+      <span className="inline-flex items-center gap-1.5 font-medium"><Gauge className="size-4" aria-hidden />{isSignedIn ? 'Signed-in access' : 'Guest access'}</span>
+      <span>{remainingTasks} of {plan.taskLimit} tasks left today</span>
+      <span>{plan.dailyBytesLabel} daily processing</span>
+      <span>{isSignedIn ? `One ${SIGNED_IN_LARGE_FILE_LABEL} file daily: ${largeFileUses ? 'used' : 'available'}` : `Each PDF under ${FREE_MAX_FILE_SIZE_LABEL}`}</span>
+      {showBatchLimit && <span>{MAX_UPLOAD_BATCH_LABEL} maximum merge batch</span>}
       <span>Web only</span>
     </div>
   )
@@ -32,8 +48,37 @@ export function PdfPreviewFrame({ title, url }: { title: string; url: string }) 
   )
 }
 
+// Source, loading, and empty preview states share one renderer across workspaces.
+export function PdfPreviewContent({
+  emptyDescription,
+  emptyTitle,
+  loading,
+  onChoose,
+  previewTitle,
+  source,
+}: {
+  emptyDescription: string
+  emptyTitle: string
+  loading: boolean
+  onChoose: () => void
+  previewTitle: string
+  source: { url: string } | null
+}) {
+  if (loading) {
+    return (
+      <div className="grid aspect-square w-full max-w-[500px] place-items-center rounded-xl border border-line bg-[#e9edf2] text-center text-muted">
+        <div><LoaderCircle className="mx-auto size-8 animate-spin text-primary" aria-hidden /><p className="mt-3 text-sm">Preparing PDF preview...</p></div>
+      </div>
+    )
+  }
+
+  if (source) return <PdfPreviewFrame title={previewTitle} url={source.url} />
+
+  return <PdfUploadEmptyState title={emptyTitle} description={emptyDescription} buttonLabel="Choose PDF" onChoose={onChoose} />
+}
+
 // Empty state shown before a visitor selects a PDF from their device.
-export function PdfUploadEmptyState({
+function PdfUploadEmptyState({
   buttonLabel,
   description,
   disabled = false,

@@ -44,6 +44,7 @@ export function App() {
           <Route path="tools/compress" element={<ToolWorkspacePage mode="compress" />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="change-password" element={<UpdatePasswordPage mode="account" />} />
         </Route>
       </Route>
 

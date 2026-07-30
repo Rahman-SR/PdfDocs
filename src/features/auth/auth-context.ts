@@ -8,6 +8,7 @@ export type AuthStatus =
   | 'unconfigured'
 
 export interface AuthContextValue {
+  finishRecovery?: () => void
   isRecovery: boolean
   status: AuthStatus
   user: User | null

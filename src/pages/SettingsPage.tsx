@@ -86,7 +86,7 @@ export function SettingsPage() {
 
 // Appearance, language, notification, privacy, and account panels.
 function AppearancePanel({ preferences, selectTheme, updatePreferences }: { preferences: AppPreferences; selectTheme: (theme: ThemePreference) => void; updatePreferences: (changes: Partial<AppPreferences>) => void }) {
-  return <SettingsCard title="Appearance" description="Customize how PDF Toolkit looks on this device."><div className="mt-8 grid gap-5 sm:grid-cols-2"><ThemeOption label="Light Mode" selected={!preferences.syncSystem && preferences.theme === 'light'} onSelect={() => selectTheme('light')} dark={false} /><ThemeOption label="Dark Mode" selected={!preferences.syncSystem && preferences.theme === 'dark'} onSelect={() => selectTheme('dark')} dark /></div><div className="mt-8 border-t border-line pt-7"><SwitchSetting label="Sync with system" description="Follow your operating system's light or dark appearance." value={preferences.syncSystem} onChange={(syncSystem) => updatePreferences({ syncSystem })} /></div></SettingsCard>
+  return <SettingsCard title="Appearance" description="Customize how PdfDocs looks on this device."><div className="mt-8 grid gap-5 sm:grid-cols-2"><ThemeOption label="Light Mode" selected={!preferences.syncSystem && preferences.theme === 'light'} onSelect={() => selectTheme('light')} dark={false} /><ThemeOption label="Dark Mode" selected={!preferences.syncSystem && preferences.theme === 'dark'} onSelect={() => selectTheme('dark')} dark /></div><div className="mt-8 border-t border-line pt-7"><SwitchSetting label="Sync with system" description="Follow your operating system's light or dark appearance." value={preferences.syncSystem} onChange={(syncSystem) => updatePreferences({ syncSystem })} /></div></SettingsCard>
 }
 
 function LanguagePanel({ preferences, updatePreferences }: { preferences: AppPreferences; updatePreferences: (changes: Partial<AppPreferences>) => void }) {
@@ -102,7 +102,7 @@ function PrivacyPanel({ preferences, updatePreferences }: { preferences: AppPref
 }
 
 function AccountPanel({ email }: { email: string }) {
-  return <SettingsCard title="Account" description="Manage account access and personal information."><div className="mt-8 rounded-xl border border-line p-5"><p className="text-xs font-medium uppercase tracking-wider text-muted">Signed-in email</p><p className="mt-2 text-sm font-medium">{email}</p><div className="mt-6 flex flex-wrap gap-3"><Link to="/profile" className="inline-flex min-h-10 items-center rounded-lg bg-primary px-5 text-sm font-medium text-white">Edit profile</Link><Link to="/forgot-password" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-white px-5 text-sm font-medium">Change password</Link></div></div></SettingsCard>
+  return <SettingsCard title="Account" description="Manage account access and personal information."><div className="mt-8 rounded-xl border border-line p-5"><p className="text-xs font-medium uppercase tracking-wider text-muted">Signed-in email</p><p className="mt-2 text-sm font-medium">{email}</p><div className="mt-6 flex flex-wrap gap-3"><Link to="/profile" className="inline-flex min-h-10 items-center rounded-lg bg-primary px-5 text-sm font-medium text-white">Edit profile</Link><Link to="/change-password" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-white px-5 text-sm font-medium">Change password</Link></div></div></SettingsCard>
 }
 
 // Reusable settings layout and form controls.

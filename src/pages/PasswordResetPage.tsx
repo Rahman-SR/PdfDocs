@@ -22,18 +22,23 @@ export function PasswordResetPage() {
     }
 
     setIsSubmitting(true)
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      email,
-      { redirectTo: buildAuthRedirect('/update-password') },
-    )
-    setIsSubmitting(false)
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email.trim().toLowerCase(),
+        { redirectTo: buildAuthRedirect('/update-password') },
+      )
 
-    if (resetError) {
-      setError(resetError.message)
-      return
+      if (resetError) {
+        setError(resetError.message)
+        return
+      }
+
+      setIsSent(true)
+    } catch {
+      setError('Unable to send a recovery email right now. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    setIsSent(true)
   }
 
   return (
@@ -83,6 +88,7 @@ export function PasswordResetPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 autoComplete="email"
+                maxLength={254}
                 required
                 autoFocus
                 placeholder="you@example.com"

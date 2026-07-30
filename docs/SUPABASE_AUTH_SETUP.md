@@ -34,24 +34,36 @@ projects also require email confirmation by default. The app handles both cases:
 it enters the dashboard immediately if sign-up returns a session, otherwise it
 asks the user to confirm their email.
 
-The reset flow sends users to `/update-password`, where the authenticated recovery
-session can update the password.
+Keep **Confirm email** enabled. In **Authentication → Sign In / Providers**:
 
-## 4. Google OAuth
+- Keep Email enabled.
+- Disable Google and every other social provider.
+- Set the minimum password length to at least 12.
+- Require uppercase, lowercase, digits, and symbols.
+- Enable **Require current password** for password changes.
+- Enable leaked-password protection when the project plan supports it.
 
-1. Create an OAuth web application in Google Auth Platform.
-2. Add this Google authorized redirect URI:
-   `https://<project-ref>.supabase.co/auth/v1/callback`
-3. In **Supabase → Authentication → Providers → Google**, enable Google and add
-   the Google client ID and secret.
-4. Keep the application `/auth/callback` URL in the Supabase redirect allow list.
+The reset flow sends users to `/update-password`. That page only accepts a
+Supabase `PASSWORD_RECOVERY` session and clears its local recovery permission
+after the password is changed.
 
-The Google secret belongs in Supabase, not in this Vite application.
+Signed-in users can open `/change-password` from Settings. The app verifies the
+current password, sends it to Supabase again with the password-change request,
+and revokes other refresh-token sessions after success.
+
+Google OAuth code and UI are intentionally absent. Disabling the Google provider
+in the Supabase dashboard prevents direct API attempts from using it.
+
+## 4. Production email delivery
+
+Configure a custom SMTP provider before public launch. Supabase's default SMTP
+service is intended for testing and can be restricted to organization members.
+Test sign-up confirmation and recovery delivery with a non-team email address.
 
 ## 5. Production security follow-up
 
-- Keep breached-password protection and appropriate rate limits enabled.
-- Use a custom SMTP provider before production email volume grows.
+- Keep appropriate Auth rate limits enabled.
+- Enable CAPTCHA protection for sign-up, sign-in, and recovery if abuse appears.
 - Enable RLS on every exposed user-data table.
 - Combine `TO authenticated` with ownership checks such as
   `(select auth.uid()) = user_id`; the role alone does not enforce ownership.
@@ -61,3 +73,7 @@ The Google secret belongs in Supabase, not in this Vite application.
 No database tables are required for the current auth-only milestone. Dashboard
 history and usage tables should be introduced through reviewed migrations with
 explicit Data API grants and RLS policies.
+
+An Edge Function is not needed for email/password authentication. Supabase Auth
+must receive and hash passwords directly; application Edge Functions should
+never log, store, or proxy raw passwords.
